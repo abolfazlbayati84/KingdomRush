@@ -1,14 +1,32 @@
 package org.example.kingdomrush;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 
 public class HelloController {
-    @FXML
-    private Label welcomeText;
 
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    private ImageView exitImage;
+
+    @FXML
+    private AnchorPane initialAnchor;
+
+    @FXML
+    private ImageView logoImage;
+
+    @FXML
+    private ImageView startImage;
+
+    @FXML
+    void exitAction(MouseEvent event) {
+
     }
+
+    @FXML
+    void startAction(MouseEvent event) {
+
+    }
+
 }

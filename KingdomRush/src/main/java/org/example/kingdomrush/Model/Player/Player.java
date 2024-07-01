@@ -112,4 +112,8 @@ public class Player {
     public void setBackpack(ArrayList<String> backpack) {
         this.backpack = backpack;
     }
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
 }
