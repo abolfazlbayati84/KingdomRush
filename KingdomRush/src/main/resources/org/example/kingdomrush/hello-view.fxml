@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:id="initialAnchor" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="900.0" style="-fx-background-color: #006400;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.kingdomrush.HelloController">
+   <children>
+      <ImageView fx:id="logoImage" fitHeight="162.0" fitWidth="166.0" layoutX="367.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Kingdom%20logo.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="startImage" fitHeight="87.0" fitWidth="123.0" layoutX="389.0" layoutY="163.0" onMouseClicked="#startAction" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@Start%20button.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="exitImage" fitHeight="80.0" fitWidth="115.0" layoutX="395.0" layoutY="265.0" onMouseClicked="#exitAction" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@exit%20button.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>
