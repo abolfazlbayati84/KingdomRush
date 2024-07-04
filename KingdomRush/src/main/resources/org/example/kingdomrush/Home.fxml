@@ -7,39 +7,38 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="initialAnchor" prefHeight="400.0" prefWidth="900.0" style="-fx-background-color: #006400;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.kingdomrush.HomeController">
    <children>
       <Circle fx:id="firstCircle" fill="#21ff94" layoutX="84.0" layoutY="200.0" onDragDetected="#firstLevelAction" radius="70.0" stroke="BLACK" strokeType="INSIDE" />
       <Circle fx:id="secondCircle" fill="#fdff21" layoutX="318.0" layoutY="200.0" radius="70.0" stroke="BLACK" strokeType="INSIDE" />
       <Circle fx:id="thirdCircle" fill="#ff2121" layoutX="573.0" layoutY="200.0" radius="70.0" stroke="BLACK" strokeType="INSIDE" />
       <Circle fx:id="fourthCircle" fill="#dd21ff" layoutX="816.0" layoutY="200.0" radius="70.0" stroke="BLACK" strokeType="INSIDE" />
-      <Label fx:id="firstLabel" alignment="CENTER" layoutX="14.0" layoutY="130.0" onDragDetected="#firstLevelAction" prefHeight="140.0" prefWidth="140.0" text="1">
+      <Label fx:id="firstLabel" alignment="CENTER" layoutX="14.0" layoutY="130.0" onMouseClicked="#firstLevelAction" prefHeight="140.0" prefWidth="140.0" text="1">
          <font>
             <Font name="System Bold" size="96.0" />
          </font>
       </Label>
-      <Label fx:id="secondLabel" alignment="CENTER" layoutX="248.0" layoutY="129.0" onDragDetected="#secondLevelAction" prefHeight="140.0" prefWidth="140.0" text="2">
+      <Label fx:id="secondLabel" alignment="CENTER" layoutX="248.0" layoutY="129.0" onMouseClicked="#secondLevelAction" prefHeight="140.0" prefWidth="140.0" text="2">
          <font>
             <Font name="System Bold" size="96.0" />
          </font>
       </Label>
-      <Label fx:id="thirdLabel" alignment="CENTER" layoutX="503.0" layoutY="129.0" onDragDetected="#thirdLevelAction" prefHeight="140.0" prefWidth="140.0" text="3">
+      <Label fx:id="thirdLabel" alignment="CENTER" layoutX="503.0" layoutY="129.0" onMouseClicked="#thirdLevelAction" prefHeight="140.0" prefWidth="140.0" text="3">
          <font>
             <Font name="System Bold" size="96.0" />
          </font>
       </Label>
-      <Label fx:id="fourthLabel" alignment="CENTER" layoutX="746.0" layoutY="130.0" onDragDetected="#fourthLevelAction" prefHeight="140.0" prefWidth="140.0" text="4">
+      <Label fx:id="fourthLabel" alignment="CENTER" layoutX="746.0" layoutY="130.0" onMouseClicked="#fourthLevelAction" prefHeight="140.0" prefWidth="140.0" text="4">
          <font>
             <Font name="System Bold" size="96.0" />
          </font>
       </Label>
-      <ImageView fx:id="shopImage" fitHeight="54.0" fitWidth="67.0" layoutX="829.0" layoutY="332.0" onDragDetected="#shopAction" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="shopImage" fitHeight="54.0" fitWidth="67.0" layoutX="829.0" layoutY="332.0" onMouseClicked="#shopAction" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@shopping-icon.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="settingsImage" fitHeight="54.0" fitWidth="67.0" layoutX="762.0" layoutY="332.0" onDragDetected="#settingsAction" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="settingsImage" fitHeight="54.0" fitWidth="67.0" layoutX="762.0" layoutY="332.0" onMouseClicked="#settingsAction" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@settings.png" />
          </image>

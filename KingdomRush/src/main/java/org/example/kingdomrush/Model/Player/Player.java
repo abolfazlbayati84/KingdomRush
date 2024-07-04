@@ -55,6 +55,15 @@ public class Player {
             System.out.println(e.getMessage());
         }
     }
+    public void addToBackpack(String spell){
+        String sqlCom = String.format("INSERT INTO `backpack`(`playerID`,`content`) VALUES('%d','%s')",id,spell);
+        MySQL sql = new MySQL();
+        try {
+            sql.executeSQL(sqlCom);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
     public static int getMaxID() throws Exception {
         String sqlCmd = "SELECT MAX(iD) from users";
         MySQL sql = new MySQL();
@@ -106,6 +115,13 @@ public class Player {
     }
 
     public void setDiamond(int diamond) {
+        String sqlCom =String.format("Update users SET diamond = '"+diamond+"' WHERE iD = '"+this.id+"'");
+        MySQL sql = new MySQL();
+        try {
+            sql.executeSQL(sqlCom);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         this.diamond = diamond;
     }
 

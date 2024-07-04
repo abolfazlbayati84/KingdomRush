@@ -51,9 +51,11 @@ public class LoginPageController {
     }
 
     @FXML
-    void loginAction(ActionEvent event) {
+    void loginAction(ActionEvent event) throws IOException {
+        boolean isLoggedIn=false;
         try {
             PlayerController.getPlayerController().login(username_txf.getText(),password_txf.getText());
+            isLoggedIn = true;
         } catch (UserNotFound e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("ERROR");
@@ -63,8 +65,13 @@ public class LoginPageController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        System.out.println("You are logged in.");
-        //TODO
+        if(isLoggedIn){
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Home.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 900, 400);
+            stage.setTitle("Kingdom Rush");
+            stage.setScene(scene);
+            stage.show();
+        }
     }
 
     @FXML

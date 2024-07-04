@@ -1,13 +1,22 @@
 package org.example.kingdomrush;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import org.example.kingdomrush.Model.Player.Player;
 
-public class HomeController {
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class HomeController implements Initializable {
 
     @FXML
     private ImageView diamondImage;
@@ -47,6 +56,15 @@ public class HomeController {
 
     @FXML
     private Label thirdLabel;
+    private static Stage stage;
+
+    public static Stage getStage() {
+        return stage;
+    }
+
+    public static void setStage(Stage stage) {
+        HomeController.stage = stage;
+    }
 
     @FXML
     void firstLevelAction(MouseEvent event) {
@@ -74,7 +92,16 @@ public class HomeController {
     }
 
     @FXML
-    void shopAction(MouseEvent event) {
+    void shopAction(MouseEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("shop-page.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 900, 400);
+        stage.setTitle("Kingdom Rush");
+        stage.setScene(scene);
+        stage.show();
+    }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        diamondLabel.setText(String.valueOf(Player.getPlayer().getDiamond()));
     }
 }

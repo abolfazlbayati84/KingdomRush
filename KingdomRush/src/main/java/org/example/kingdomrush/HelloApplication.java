@@ -14,6 +14,8 @@ public class HelloApplication extends Application {
         HelloController.setStage(stage);
         SignupPageController.setStage(stage);
         LoginPageController.setStage(stage);
+        HomeController.setStage(stage);
+        ShopPageController.setStage(stage);
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 900, 400);
         stage.setTitle("Kingdom Rush");
