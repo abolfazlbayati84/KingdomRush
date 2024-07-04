@@ -10,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import org.example.kingdomrush.Model.Map.FirstMap;
 import org.example.kingdomrush.Model.Player.Player;
 
 import java.io.IOException;
@@ -67,8 +68,14 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    void firstLevelAction(MouseEvent event) {
-
+    void firstLevelAction(MouseEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("first-map.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 900, 400);
+        stage.setTitle("Kingdom Rush");
+        stage.setScene(scene);
+        stage.show();
+        FirstMapController.setScene(scene);
+        FirstMapController.setScene();
     }
 
     @FXML
