@@ -9,8 +9,6 @@ public class Map {
     private int startingCoins;
 
     public Map(Coordinate endPoint, int startingCoins) {
-//        this.towerCoordinates = towerCoordinates;
-//        this.path = path;
         this.endPoint = endPoint;
         this.startingCoins = startingCoins;
     }
