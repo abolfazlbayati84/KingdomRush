@@ -8,7 +8,8 @@ import java.util.ArrayList;
 public class MapController {
     private static MapController mapController;
     private ArrayList<Tower> towers;
-
+    private int coins;
+    private Map map;
     public MapController() {
         towers = new ArrayList<>();
     }
@@ -19,8 +20,26 @@ public class MapController {
         }
         return mapController;
     }
-    public void addTower(Map map, Tower tower){
-        map.setStartingCoins(map.getStartingCoins() - tower.getBuildPrice());
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
+        coins = map.getStartingCoins();
+    }
+
+    public void addTower(Tower tower){
+        coins = coins - tower.getBuildPrice();
         towers.add(tower);
     }
 }

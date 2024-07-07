@@ -3,14 +3,18 @@ package org.example.kingdomrush.Model.Map;
 import java.util.ArrayList;
 
 public class Map {
-    private ArrayList<Coordinate> towerCoordinates;
-    private ArrayList<Coordinate> path;
-    private Coordinate endPoint;
-    private int startingCoins;
+    private final ArrayList<Coordinate> towerCoordinates;
+    private final ArrayList<Coordinate> path;
+    private final Coordinate endPoint;
+    private final int startingCoins;
+    private final ArrayList<Wave> waves;
 
     public Map(Coordinate endPoint, int startingCoins) {
         this.endPoint = endPoint;
         this.startingCoins = startingCoins;
+        this.waves = new ArrayList<>();
+        towerCoordinates = new ArrayList<>();
+        path = new ArrayList<>();
     }
 
     public ArrayList<Coordinate> getTowerCoordinates() {
@@ -29,19 +33,7 @@ public class Map {
         return startingCoins;
     }
 
-    public void setTowerCoordinates(ArrayList<Coordinate> towerCoordinates) {
-        this.towerCoordinates = towerCoordinates;
-    }
-
-    public void setPath(ArrayList<Coordinate> path) {
-        this.path = path;
-    }
-
-    public void setEndPoint(Coordinate endPoint) {
-        this.endPoint = endPoint;
-    }
-
-    public void setStartingCoins(int startingCoins) {
-        this.startingCoins = startingCoins;
+    public ArrayList<Wave> getWaves() {
+        return waves;
     }
 }

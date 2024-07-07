@@ -1,8 +1,12 @@
 package org.example.kingdomrush;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -14,13 +18,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.example.kingdomrush.Controller.MapController;
 import org.example.kingdomrush.Model.Map.*;
 import org.example.kingdomrush.Model.Player.Player;
 import org.example.kingdomrush.Model.Tower.Archer;
 import org.example.kingdomrush.Model.Tower.MortarBomb;
 import org.example.kingdomrush.Model.Tower.Vizard;
+import javafx.animation.PathTransition;
 
 import java.io.IOException;
 import java.net.URL;
@@ -82,6 +91,8 @@ public class HomeController implements Initializable {
     private Scene scene;
     private HBox hBox;
     private Label coinNumber;
+    private Image raiderImage;
+    private ImageView raiderImageView;
 
     public static Stage getStage() {
         return stage;
@@ -106,7 +117,7 @@ public class HomeController implements Initializable {
     }
     public void addPopUp(int finalI,ArrayList<Coordinate> towerCoordinates,Map map){
 
-        if(map.getStartingCoins()>=70) {
+        if(MapController.getMapController().getCoins()>=70) {
             String path2 = HelloApplication.class.getResource("popUp1.png").toExternalForm();
             String path3 = HelloApplication.class.getResource("popUp2.png").toExternalForm();
             String path4 = HelloApplication.class.getResource("popUp3.png").toExternalForm();
@@ -135,57 +146,107 @@ public class HomeController implements Initializable {
         imageView5.setFitHeight(50);
         imageView5.setFitWidth(70);
         pane.getChildren().add(imageView5);
-        addNumberOfCoins(map);
+        addNumberOfCoins();
     }
-    public void addNumberOfCoins(Map map){
+    public void addNumberOfCoins(){
         if(coinNumber == null){
             coinNumber = new Label();
         }
-        if(map instanceof FirstMap){
-            coinNumber.setText("Coins: "+FirstMap.getFirstMap().getStartingCoins());
-
-        }else if(map instanceof SecondMap){
-            coinNumber.setText("Coins: "+SecondMap.getSecondMap().getStartingCoins());
-
-        }else if(map instanceof ThirdMap){
-            coinNumber.setText("Coins: "+ThirdMap.getThirdMap().getStartingCoins());
-
-        }
+        coinNumber.setText("Coins: "+MapController.getMapController().getCoins());
     }
-    @FXML
-    void firstLevelAction(MouseEvent event) throws IOException {
-        addMapPic("first map.jpg");
-        addNumberOfCoins(FirstMap.getFirstMap());
-        pane.getChildren().add(coinNumber);
-        ArrayList<Coordinate> towerCoordinates = FirstMap.getFirstMap().getTowerCoordinates();
-        for(int i=0 ; i<FirstMap.getFirstMap().getTowerCoordinates().size();i++){
-            Circle circle = new Circle(FirstMap.getFirstMap().getTowerCoordinates().get(i).getX(),FirstMap.getFirstMap().getTowerCoordinates().get(i).getY(),20);
+    public void managePopUp(){
+        Map map = MapController.getMapController().getMap();
+        for(int i=0 ; i<map.getTowerCoordinates().size();i++){
+            Circle circle = new Circle(map.getTowerCoordinates().get(i).getX(),map.getTowerCoordinates().get(i).getY(),20);
             circle.setFill(new Color(0,0,1,0.05));
             pane.getChildren().add(circle);
             int finalI = i;
             circle.setOnMouseClicked(mouseEvent -> {
-                addPopUp(finalI,towerCoordinates,FirstMap.getFirstMap());
+                addPopUp(finalI,map.getTowerCoordinates(),map);
                 imageView2.setOnMouseClicked(event2 ->{
-                    if(FirstMap.getFirstMap().getStartingCoins()>=70){
-                        MapController.getMapController().addTower(FirstMap.getFirstMap(),new Archer(new Coordinate(FirstMap.getFirstMap().getTowerCoordinates().get(finalI).getX(),FirstMap.getFirstMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("archer.png",finalI,towerCoordinates,FirstMap.getFirstMap());
+                    if(MapController.getMapController().getCoins()>=70){
+                        MapController.getMapController().addTower(new Archer(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())));
+                        addTowerPic("archer.png",finalI,map.getTowerCoordinates(),map);
                     }
                 });
                 imageView3.setOnMouseClicked(event3 ->{
-                    if(FirstMap.getFirstMap().getStartingCoins()>=100){
-                        MapController.getMapController().addTower(FirstMap.getFirstMap(),new Vizard(new Coordinate(FirstMap.getFirstMap().getTowerCoordinates().get(finalI).getX(),FirstMap.getFirstMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("mage.png",finalI,towerCoordinates,FirstMap.getFirstMap());
+                    if(MapController.getMapController().getCoins()>=100){
+                        MapController.getMapController().addTower(new Vizard(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())));
+                        addTowerPic("mage.png",finalI,map.getTowerCoordinates(),map);
                     }
                 });
                 imageView4.setOnMouseClicked(event4 ->{
-                    if(FirstMap.getFirstMap().getStartingCoins()>=125){
-                        MapController.getMapController().addTower(FirstMap.getFirstMap(),new MortarBomb(new Coordinate(FirstMap.getFirstMap().getTowerCoordinates().get(finalI).getX(),FirstMap.getFirstMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("artillery.png",finalI,towerCoordinates,FirstMap.getFirstMap());
+                    if(MapController.getMapController().getCoins()>=125){
+                        MapController.getMapController().addTower(new MortarBomb(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())));
+                        addTowerPic("artillery.png",finalI,map.getTowerCoordinates(),map);
                     }
                 });
             });
         }
 
+    }
+    @FXML
+    void firstLevelAction(MouseEvent event) throws IOException {
+        addMapPic("first map.jpg");
+        MapController.getMapController().setMap(FirstMap.getFirstMap());
+        addNumberOfCoins();
+        pane.getChildren().add(coinNumber);
+        managePopUp();
+        String path = HelloApplication.class.getResource("troll1.png").toExternalForm();
+        String path3 = HelloApplication.class.getResource("troll2.png").toExternalForm();
+        String path4 = HelloApplication.class.getResource("troll3.png").toExternalForm();
+        raiderImage = new Image(path);
+        raiderImageView = new ImageView(raiderImage);
+        Image raiderImage3 = new Image(path3);
+        Image raiderImage4 = new Image(path4);
+        ImageView raiderImageView3 = new ImageView(raiderImage3);
+        ImageView raiderImageView4 = new ImageView(raiderImage4);
+
+        raiderImageView3.setFitHeight(30);
+        raiderImageView3.setFitWidth(20);
+
+        raiderImageView4.setFitWidth(20);
+        raiderImageView4.setFitHeight(30);
+
+        raiderImageView.setFitWidth(20);
+        raiderImageView.setFitHeight(30);
+        Group raider = new Group();
+        pane.getChildren().add(raider);
+        Path path2 = new Path();
+        path2.getElements().add(new MoveTo(FirstMap.getFirstMap().getPath().get(0).getX(),FirstMap.getFirstMap().getPath().get(0).getY()));
+        boolean isFirstTime = true;
+        for(Coordinate coordinate : FirstMap.getFirstMap().getPath()){
+            if(!isFirstTime){
+                path2.getElements().add(new LineTo(coordinate.getX(),coordinate.getY()));
+            }
+            isFirstTime = false;
+        }
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setPath(path2);
+        pathTransition.setDuration(Duration.seconds(60));
+        pathTransition.setNode(raider);
+        pathTransition.play();
+
+
+
+        Timeline t = new Timeline();
+        t.setCycleCount(Timeline.INDEFINITE);
+        t.getKeyFrames().add(new KeyFrame(
+                Duration.millis(500),(ActionEvent event3) ->{
+            raider.getChildren().setAll(raiderImageView);
+        }
+        ));
+        t.getKeyFrames().add(new KeyFrame(
+                Duration.millis(1000),(ActionEvent event3) ->{
+            raider.getChildren().setAll(raiderImageView3);
+        }
+        ));
+        t.getKeyFrames().add(new KeyFrame(
+                Duration.millis(1500),(ActionEvent event3) ->{
+            raider.getChildren().setAll(raiderImageView4);
+        }
+        ));
+        t.play();
     }
 
     @FXML
@@ -200,72 +261,20 @@ public class HomeController implements Initializable {
 
     @FXML
     void secondLevelAction(MouseEvent event) {
-        ArrayList<Coordinate> towerCoordinates = SecondMap.getSecondMap().getTowerCoordinates();
         addMapPic("second map.jpg");
-        addNumberOfCoins(SecondMap.getSecondMap());
+        MapController.getMapController().setMap(SecondMap.getSecondMap());
+        addNumberOfCoins();
         pane.getChildren().add(coinNumber);
-        for(int i = 0; i< SecondMap.getSecondMap().getTowerCoordinates().size(); i++){
-            Circle circle = new Circle(SecondMap.getSecondMap().getTowerCoordinates().get(i).getX(),SecondMap.getSecondMap().getTowerCoordinates().get(i).getY(),20);
-            circle.setFill(new Color(0,0,1,0.05));
-            pane.getChildren().add(circle);
-            int finalI=i;
-            circle.setOnMouseClicked(mouseEvent -> {
-                addPopUp(finalI,towerCoordinates,SecondMap.getSecondMap());
-                imageView2.setOnMouseClicked(event2 ->{
-                    if(SecondMap.getSecondMap().getStartingCoins()>=70){
-                        MapController.getMapController().addTower(SecondMap.getSecondMap(),new Archer(new Coordinate(SecondMap.getSecondMap().getTowerCoordinates().get(finalI).getX(),SecondMap.getSecondMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("archer.png",finalI,towerCoordinates,SecondMap.getSecondMap());
-                    }
-                });
-                imageView3.setOnMouseClicked(event3 ->{
-                    if(SecondMap.getSecondMap().getStartingCoins()>=100){
-                        MapController.getMapController().addTower(SecondMap.getSecondMap(),new Vizard(new Coordinate(SecondMap.getSecondMap().getTowerCoordinates().get(finalI).getX(),SecondMap.getSecondMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("mage.png",finalI,towerCoordinates,SecondMap.getSecondMap());
-                    }
-                });
-                imageView4.setOnMouseClicked(event4 ->{
-                    if(SecondMap.getSecondMap().getStartingCoins()>=125){
-                        MapController.getMapController().addTower(SecondMap.getSecondMap(),new MortarBomb(new Coordinate(SecondMap.getSecondMap().getTowerCoordinates().get(finalI).getX(),SecondMap.getSecondMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("artillery.png",finalI,towerCoordinates,SecondMap.getSecondMap());
-                    }
-                });
-            });
-        }
+        managePopUp();
     }
 
     @FXML
     void thirdLevelAction(MouseEvent event) {
         addMapPic("third map.jpg");
-        addNumberOfCoins(ThirdMap.getThirdMap());
+        MapController.getMapController().setMap(ThirdMap.getThirdMap());
+        addNumberOfCoins();
         pane.getChildren().add(coinNumber);
-        ArrayList<Coordinate> towerCoordinates = ThirdMap.getThirdMap().getTowerCoordinates();
-        for(int i = 0; i< ThirdMap.getThirdMap().getTowerCoordinates().size(); i++){
-            Circle circle = new Circle(ThirdMap.getThirdMap().getTowerCoordinates().get(i).getX(),ThirdMap.getThirdMap().getTowerCoordinates().get(i).getY(),20);
-            circle.setFill(new Color(0,0,1,0.05));
-            pane.getChildren().add(circle);
-            int finalI = i;
-            circle.setOnMouseClicked(mouseEvent -> {
-                addPopUp(finalI,towerCoordinates,ThirdMap.getThirdMap());
-                imageView2.setOnMouseClicked(event2 ->{
-                    if(ThirdMap.getThirdMap().getStartingCoins()>=70){
-                        MapController.getMapController().addTower(ThirdMap.getThirdMap(),new Archer(new Coordinate(ThirdMap.getThirdMap().getTowerCoordinates().get(finalI).getX(),ThirdMap.getThirdMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("archer.png",finalI,towerCoordinates,ThirdMap.getThirdMap());
-                    }
-                });
-                imageView3.setOnMouseClicked(event3 ->{
-                    if(ThirdMap.getThirdMap().getStartingCoins()>=100){
-                        MapController.getMapController().addTower(ThirdMap.getThirdMap(),new Vizard(new Coordinate(ThirdMap.getThirdMap().getTowerCoordinates().get(finalI).getX(),ThirdMap.getThirdMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("mage.png",finalI,towerCoordinates,ThirdMap.getThirdMap());
-                    }
-                });
-                imageView4.setOnMouseClicked(event4 ->{
-                    if(ThirdMap.getThirdMap().getStartingCoins()>=125){
-                        MapController.getMapController().addTower(ThirdMap.getThirdMap(),new MortarBomb(new Coordinate(ThirdMap.getThirdMap().getTowerCoordinates().get(finalI).getX(),ThirdMap.getThirdMap().getTowerCoordinates().get(finalI).getY())));
-                        addTowerPic("artillery.png",finalI,towerCoordinates,ThirdMap.getThirdMap());
-                    }
-                });
-            });
-        }
+        managePopUp();
     }
 
     @FXML

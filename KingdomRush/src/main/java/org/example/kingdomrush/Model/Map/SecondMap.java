@@ -1,5 +1,10 @@
 package org.example.kingdomrush.Model.Map;
 
+import org.example.kingdomrush.Model.Raiders.Crab;
+import org.example.kingdomrush.Model.Raiders.DarkNight;
+import org.example.kingdomrush.Model.Raiders.Ghost;
+import org.example.kingdomrush.Model.Raiders.Spider;
+
 import java.util.ArrayList;
 
 public class SecondMap extends Map{
@@ -7,8 +12,8 @@ public class SecondMap extends Map{
     private SecondMap(Coordinate endPoint, int startingCoins) {
         super(endPoint, startingCoins);
 
-        ArrayList<Coordinate> towerCoordinates = new ArrayList<>();
-        ArrayList<Coordinate> path = new ArrayList<>();
+        ArrayList<Coordinate> towerCoordinates = getTowerCoordinates();
+        ArrayList<Coordinate> path = getPath();
 
         towerCoordinates.add(new Coordinate(481.6,80.0));
         towerCoordinates.add(new Coordinate(481.6,130.4));
@@ -36,8 +41,26 @@ public class SecondMap extends Map{
         path.add(new Coordinate(380.0,358.4));
         path.add(new Coordinate(380.8,375.2));
 
-        this.setTowerCoordinates(towerCoordinates);
-        this.setPath(path);
+        getWaves().add(createWave(5,0,0,5));
+        getWaves().add(createWave(4,3,3,0));
+        getWaves().add(createWave(3,3,2,2));
+
+    }
+    public Wave createWave(int crabs,int darkNights,int ghosts,int spiders){
+        Wave wave = new Wave();
+        for(int i=0 ; i<crabs ; i++){
+            wave.getRaiders().add(new Crab());
+        }
+        for(int i=0 ; i<darkNights ; i++){
+            wave.getRaiders().add(new DarkNight());
+        }
+        for(int i=0 ; i<ghosts ; i++){
+            wave.getRaiders().add(new Ghost());
+        }
+        for(int i=0 ; i<spiders ; i++){
+            wave.getRaiders().add(new Spider());
+        }
+        return wave;
     }
 
     public static SecondMap getSecondMap() {
