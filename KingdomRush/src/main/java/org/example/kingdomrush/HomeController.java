@@ -1,13 +1,16 @@
 package org.example.kingdomrush;
 
 import javafx.animation.KeyFrame;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,17 +18,18 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.kingdomrush.Controller.MapController;
 import org.example.kingdomrush.Model.Map.*;
 import org.example.kingdomrush.Model.Player.Player;
+import org.example.kingdomrush.Model.Raiders.Raider;
 import org.example.kingdomrush.Model.Tower.Archer;
 import org.example.kingdomrush.Model.Tower.MortarBomb;
 import org.example.kingdomrush.Model.Tower.Vizard;
@@ -35,6 +39,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class HomeController implements Initializable {
 
@@ -93,6 +99,7 @@ public class HomeController implements Initializable {
     private Label coinNumber;
     private Image raiderImage;
     private ImageView raiderImageView;
+    private Label wave_lbl;
 
     public static Stage getStage() {
         return stage;
@@ -152,7 +159,18 @@ public class HomeController implements Initializable {
         if(coinNumber == null){
             coinNumber = new Label();
         }
-        coinNumber.setText("Coins: "+MapController.getMapController().getCoins());
+        String path = HelloApplication.class.getResource("dollar-icon-png-3537.png").toExternalForm();
+        Image image = new Image(path);
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(20);
+        imageView.setFitHeight(20);
+        imageView.setLayoutY(2);
+        pane.getChildren().add(imageView);
+        coinNumber.setText(" "+MapController.getMapController().getCoins());
+        coinNumber.setTextFill(Color.WHITE);
+        Font font = new Font("Arial",24);
+        coinNumber.setFont(font);
+        coinNumber.setLayoutX(22);
     }
     public void managePopUp(){
         Map map = MapController.getMapController().getMap();
@@ -259,6 +277,79 @@ public class HomeController implements Initializable {
         });
     }
 
+    public void updateWave(AtomicInteger waveIndex){
+        if(wave_lbl == null){
+            wave_lbl = new Label();
+            pane.getChildren().add(wave_lbl);
+        }
+        wave_lbl.setText("Waves: "+waveIndex+"/3");
+        Font font = new Font("Arial",24);
+        wave_lbl.setFont(font);
+        wave_lbl.setTextFill(Color.WHITE);
+        wave_lbl.setLayoutY(25);
+        wave_lbl.setLayoutX(27);
+    }
+    public void addWavePic(){
+        String path = HelloApplication.class.getResource("skull.png").toExternalForm();
+        Image image = new Image(path);
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(25);
+        imageView.setFitWidth(25);
+        imageView.setLayoutY(25);
+        pane.getChildren().add(imageView);
+    }
+    public void addRaiderToMap(int i,Wave wave){
+        if(i>=10){
+            return;
+        }
+        Raider raider = wave.getRaiders().get(i);
+        ArrayList<ImageView> raiderImageViews = new ArrayList<>();
+        ArrayList<String> paths = raider.getPhotoAddresses();
+        for (String path : paths) {
+            Image image = new Image(HelloApplication.class.getResource(path).toExternalForm());
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(20);
+            imageView.setFitHeight(30);
+            raiderImageViews.add(imageView);
+        }
+
+        Group raiderGroup = new Group();
+        pane.getChildren().add(raiderGroup);
+        Path path2 = new Path();
+        path2.getElements().add(new MoveTo(MapController.getMapController().getMap().getPath().get(0).getX(), MapController.getMapController().getMap().getPath().get(0).getY()));
+        boolean isFirstTime = true;
+        for (Coordinate coordinate : MapController.getMapController().getMap().getPath()) {
+            if (!isFirstTime) {
+                path2.getElements().add(new LineTo(coordinate.getX(), coordinate.getY()));
+            }
+            isFirstTime = false;
+        }
+
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setPath(path2);
+        pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
+        pathTransition.setNode(raiderGroup);
+        pathTransition.play();
+
+        Timeline t = new Timeline();
+        t.setCycleCount(Timeline.INDEFINITE);
+        for (int j = 1; j < raiderImageViews.size()+1; j++) {
+            ImageView raiderImageView = raiderImageViews.get(j-1);
+            t.getKeyFrames().add(new KeyFrame(
+                    Duration.millis(j * 200), (ActionEvent event3) -> {
+                raiderGroup.getChildren().setAll(raiderImageView);
+            }
+            ));
+        }
+        t.play();
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(e->{
+            addRaiderToMap(i+1,wave);
+        });
+        pause.play();
+
+
+    }
     @FXML
     void secondLevelAction(MouseEvent event) {
         addMapPic("second map.jpg");
@@ -266,6 +357,45 @@ public class HomeController implements Initializable {
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
         managePopUp();
+
+        Button nextWave_btn = new Button();
+        nextWave_btn.setText("Start");
+        nextWave_btn.setLayoutX(75);
+        pane.getChildren().add(nextWave_btn);
+        nextWave_btn.setStyle("-fx-background-color: #FF5733; -fx-text-fill: white");
+
+        AtomicInteger waveIndex = new AtomicInteger(0);
+        AtomicBoolean nextWave = new AtomicBoolean(false);
+        addWavePic();
+        updateWave(waveIndex);
+
+        nextWave_btn.setOnMouseClicked(mouseEvent -> {
+            nextWave.set(true);
+            if(waveIndex.get()==0){
+                nextWave_btn.setText("Next Wave");
+            }
+        });
+
+        new Thread(() -> {
+            while (waveIndex.get() < 3) {
+                Platform.runLater(() -> {
+                    if (nextWave.get() && waveIndex.get() < 3) {
+                        Wave wave = SecondMap.getSecondMap().getWaves().get(waveIndex.get());
+                        addRaiderToMap(0,wave);
+                        waveIndex.incrementAndGet();
+                        //wave_lbl.setText("Waves: "+waveIndex+"/3");
+                        updateWave(waveIndex);
+                        nextWave.set(false);
+                    }
+                });
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @FXML
@@ -275,6 +405,60 @@ public class HomeController implements Initializable {
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
         managePopUp();
+        int i=0;
+        boolean nextWave = true;
+        while(nextWave && i<ThirdMap.getThirdMap().getWaves().size()){
+            Wave wave = ThirdMap.getThirdMap().getWaves().get(i);
+            ArrayList<Group> raiderGroups = new ArrayList<>();
+            Platform.runLater(()->{
+                for(Raider raider : wave.getRaiders()){
+                    ArrayList<ImageView> raiderImageViews = new ArrayList<>();
+                    for(String path : raider.getPhotoAddresses()){
+                        Image image = new Image(HelloApplication.class.getResource(path).toExternalForm());
+                        ImageView imageView = new ImageView(image);
+                        imageView.setFitWidth(20);
+                        imageView.setFitHeight(30);
+                        raiderImageViews.add(imageView);
+                    }
+                    Group raiderGroup = new Group();
+                    raiderGroups.add(raiderGroup);
+                    pane.getChildren().add(raiderGroup);
+                    Path path2 = new Path();
+                    path2.getElements().add(new MoveTo(ThirdMap.getThirdMap().getPath().get(0).getX(),ThirdMap.getThirdMap().getPath().get(0).getY()));
+                    boolean isFirstTime = true;
+                    for(Coordinate coordinate : ThirdMap.getThirdMap().getPath()){
+                        if(!isFirstTime){
+                            path2.getElements().add(new LineTo(coordinate.getX(),coordinate.getY()));
+                        }
+                        isFirstTime = false;
+                    }
+                    PathTransition pathTransition = new PathTransition();
+                    pathTransition.setPath(path2);
+                    pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
+                    pathTransition.setNode(raiderGroup);
+                    pathTransition.play();
+
+                    Timeline t = new Timeline();
+                    t.setCycleCount(Timeline.INDEFINITE);
+                    int j=1;
+                    for(ImageView raiderImageView : raiderImageViews){
+                        t.getKeyFrames().add(new KeyFrame(
+                                Duration.millis(j*200),(ActionEvent event3) ->{
+                            raiderGroup.getChildren().setAll(raiderImageView);
+                        }
+                        ));
+                        j++;
+                    }
+                    t.play();
+
+                }
+            });
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+        }
     }
 
     @FXML

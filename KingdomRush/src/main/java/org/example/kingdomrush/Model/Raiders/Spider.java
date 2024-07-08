@@ -3,7 +3,7 @@ package org.example.kingdomrush.Model.Raiders;
 public class Spider extends Raider{
 
     public Spider() {
-        super(70, 30, 30);
+        super(70, 20, 30);
         this.setFlying(false);
         getPhotoAddresses().add("spider1.png");
         getPhotoAddresses().add("spider2.png");
