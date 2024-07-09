@@ -26,7 +26,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.example.kingdomrush.Controller.MapController;
+import org.example.kingdomrush.Controller.*;
 import org.example.kingdomrush.Model.Map.*;
 import org.example.kingdomrush.Model.Player.Player;
 import org.example.kingdomrush.Model.Raiders.Raider;
@@ -96,7 +96,7 @@ public class HomeController implements Initializable {
     private ImageView imageView5;
     private Scene scene;
     private HBox hBox;
-    private Label coinNumber;
+    private static Label coinNumber;
     private Image raiderImage;
     private ImageView raiderImageView;
     private Label wave_lbl;
@@ -108,6 +108,14 @@ public class HomeController implements Initializable {
 
     public static void setStage(Stage stage) {
         HomeController.stage = stage;
+    }
+
+    public static void setCoinNumber(Label coinNumber) {
+        HomeController.coinNumber = coinNumber;
+    }
+
+    public static Label getCoinNumber() {
+        return coinNumber;
     }
 
     public void addMapPic(String picAddress){
@@ -184,19 +192,19 @@ public class HomeController implements Initializable {
                 addPopUp(finalI,map.getTowerCoordinates(),map);
                 imageView2.setOnMouseClicked(event2 ->{
                     if(MapController.getMapController().getCoins()>=70){
-                        MapController.getMapController().addTower(new Archer(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())));
+                        MapController.getMapController().addTower(new Archer(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
                         addTowerPic("archer.png",finalI,map.getTowerCoordinates(),map);
                     }
                 });
                 imageView3.setOnMouseClicked(event3 ->{
                     if(MapController.getMapController().getCoins()>=100){
-                        MapController.getMapController().addTower(new Vizard(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())));
+                        MapController.getMapController().addTower(new Vizard(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
                         addTowerPic("mage.png",finalI,map.getTowerCoordinates(),map);
                     }
                 });
                 imageView4.setOnMouseClicked(event4 ->{
                     if(MapController.getMapController().getCoins()>=125){
-                        MapController.getMapController().addTower(new MortarBomb(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())));
+                        MapController.getMapController().addTower(new MortarBomb(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
                         addTowerPic("artillery.png",finalI,map.getTowerCoordinates(),map);
                     }
                 });
@@ -210,6 +218,7 @@ public class HomeController implements Initializable {
         MapController.getMapController().setMap(FirstMap.getFirstMap());
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
+        //MapController.getMapController().towerWakeUp(pane);
         managePopUp();
 
         addNextButton();
@@ -276,6 +285,41 @@ public class HomeController implements Initializable {
         imageView.setLayoutY(25);
         pane.getChildren().add(imageView);
     }
+    public void setPathForRaiders(Raider raider){
+        Path path2 = new Path();
+        path2.getElements().add(new MoveTo(MapController.getMapController().getMap().getPath().get(0).getX(), MapController.getMapController().getMap().getPath().get(0).getY()));
+        boolean isFirstTime = true;
+        for (Coordinate coordinate : MapController.getMapController().getMap().getPath()) {
+            if (!isFirstTime) {
+                path2.getElements().add(new LineTo(coordinate.getX(), coordinate.getY()));
+            }
+            isFirstTime = false;
+        }
+
+        PathTransition pathTransition = new PathTransition();
+        pathTransition.setPath(path2);
+        pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
+        pathTransition.setNode(raider);
+        pathTransition.play();
+    }
+    public void setTimelineForRaiders(ArrayList<ImageView> raiderImageViews,Raider raider,Wave wave,int i){
+        Timeline t = new Timeline();
+        t.setCycleCount(Timeline.INDEFINITE);
+        for (int j = 1; j < raiderImageViews.size()+1; j++) {
+            ImageView raiderImageView = raiderImageViews.get(j-1);
+            t.getKeyFrames().add(new KeyFrame(
+                    Duration.millis(j * 200), (ActionEvent event3) -> {
+                raider.setImage(raiderImageView.getImage());
+            }
+            ));
+        }
+        t.play();
+        PauseTransition pause = new PauseTransition(Duration.seconds(1));
+        pause.setOnFinished(e->{
+            addRaiderToMap(i+1,wave);
+        });
+        pause.play();
+    }
     public void addRaiderToMap(int i,Wave wave){
         if(i>=10){
             return;
@@ -290,42 +334,14 @@ public class HomeController implements Initializable {
             imageView.setFitHeight(30);
             raiderImageViews.add(imageView);
         }
+        raider.setFitWidth(20);
+        raider.setFitHeight(30);
 
-        Group raiderGroup = new Group();
-        pane.getChildren().add(raiderGroup);
-        Path path2 = new Path();
-        path2.getElements().add(new MoveTo(MapController.getMapController().getMap().getPath().get(0).getX(), MapController.getMapController().getMap().getPath().get(0).getY()));
-        boolean isFirstTime = true;
-        for (Coordinate coordinate : MapController.getMapController().getMap().getPath()) {
-            if (!isFirstTime) {
-                path2.getElements().add(new LineTo(coordinate.getX(), coordinate.getY()));
-            }
-            isFirstTime = false;
-        }
+        pane.getChildren().add(raider);
 
-        PathTransition pathTransition = new PathTransition();
-        pathTransition.setPath(path2);
-        pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
-        pathTransition.setNode(raiderGroup);
-        pathTransition.play();
+        setPathForRaiders(raider);
 
-        Timeline t = new Timeline();
-        t.setCycleCount(Timeline.INDEFINITE);
-        for (int j = 1; j < raiderImageViews.size()+1; j++) {
-            ImageView raiderImageView = raiderImageViews.get(j-1);
-            t.getKeyFrames().add(new KeyFrame(
-                    Duration.millis(j * 200), (ActionEvent event3) -> {
-                raiderGroup.getChildren().setAll(raiderImageView);
-            }
-            ));
-        }
-        t.play();
-        PauseTransition pause = new PauseTransition(Duration.seconds(1));
-        pause.setOnFinished(e->{
-            addRaiderToMap(i+1,wave);
-        });
-        pause.play();
-
+        setTimelineForRaiders(raiderImageViews,raider,wave,i);
 
     }
     public void addNextButton(){

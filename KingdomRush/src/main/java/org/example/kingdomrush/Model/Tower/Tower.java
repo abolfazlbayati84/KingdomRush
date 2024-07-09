@@ -9,15 +9,35 @@ abstract public class Tower extends ImageView{
     private double x;
     private double y;
     private Coordinate coordinate;
+    private int attackRange;
 
-    public Tower(int damagePower, int buildPrice, Coordinate coordinate) {
+    public Tower(int damagePower, int buildPrice, Coordinate coordinate,int attackRange) {
         this.damagePower = damagePower;
         this.buildPrice = buildPrice;
         this.coordinate = coordinate;
+        this.attackRange = attackRange;
     }
     abstract void defence();
+
     abstract void promoteTower();
+
     abstract void ruin();
+
+    public int getAttackRange() {
+        return attackRange;
+    }
+
+    public void setAttackRange(int attackRange) {
+        this.attackRange = attackRange;
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate = coordinate;
+    }
 
     public int getDamagePower() {
         return damagePower;
@@ -27,14 +47,6 @@ abstract public class Tower extends ImageView{
         return buildPrice;
     }
 
-//    public double getX() {
-//        return x;
-//    }
-//
-//    public double getY() {
-//        return y;
-//    }
-
     public void setDamagePower(int damagePower) {
         this.damagePower = damagePower;
     }
@@ -43,11 +55,4 @@ abstract public class Tower extends ImageView{
         this.buildPrice = buildPrice;
     }
 
-//    public void setX(double x) {
-//        this.x = x;
-//    }
-//
-//    public void setY(double y) {
-//        this.y = y;
-//    }
 }

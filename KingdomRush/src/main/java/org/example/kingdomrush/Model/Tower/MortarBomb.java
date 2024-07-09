@@ -5,7 +5,7 @@ import org.example.kingdomrush.Model.Map.Coordinate;
 public class MortarBomb extends Tower{
 
     public MortarBomb(Coordinate coordinate) {
-        super(30, 125, coordinate);
+        super(10, 125, coordinate,90);
     }
 
     @Override
