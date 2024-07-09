@@ -1,8 +1,9 @@
 package org.example.kingdomrush.Model.Tower;
 
+import javafx.scene.image.ImageView;
 import org.example.kingdomrush.Model.Map.Coordinate;
 
-abstract public class Tower {
+abstract public class Tower extends ImageView{
     private int damagePower;
     private int buildPrice;
     private double x;
@@ -26,13 +27,13 @@ abstract public class Tower {
         return buildPrice;
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
+//    public double getX() {
+//        return x;
+//    }
+//
+//    public double getY() {
+//        return y;
+//    }
 
     public void setDamagePower(int damagePower) {
         this.damagePower = damagePower;
@@ -42,11 +43,11 @@ abstract public class Tower {
         this.buildPrice = buildPrice;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
+//    public void setX(double x) {
+//        this.x = x;
+//    }
+//
+//    public void setY(double y) {
+//        this.y = y;
+//    }
 }

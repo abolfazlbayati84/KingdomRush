@@ -100,6 +100,7 @@ public class HomeController implements Initializable {
     private Image raiderImage;
     private ImageView raiderImageView;
     private Label wave_lbl;
+    private Button nextWave_btn;
 
     public static Stage getStage() {
         return stage;
@@ -210,61 +211,38 @@ public class HomeController implements Initializable {
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
         managePopUp();
-        String path = HelloApplication.class.getResource("troll1.png").toExternalForm();
-        String path3 = HelloApplication.class.getResource("troll2.png").toExternalForm();
-        String path4 = HelloApplication.class.getResource("troll3.png").toExternalForm();
-        raiderImage = new Image(path);
-        raiderImageView = new ImageView(raiderImage);
-        Image raiderImage3 = new Image(path3);
-        Image raiderImage4 = new Image(path4);
-        ImageView raiderImageView3 = new ImageView(raiderImage3);
-        ImageView raiderImageView4 = new ImageView(raiderImage4);
 
-        raiderImageView3.setFitHeight(30);
-        raiderImageView3.setFitWidth(20);
+        addNextButton();
 
-        raiderImageView4.setFitWidth(20);
-        raiderImageView4.setFitHeight(30);
+        AtomicInteger waveIndex = new AtomicInteger(0);
+        AtomicBoolean nextWave = new AtomicBoolean(false);
+        addWavePic();
+        updateWave(waveIndex);
 
-        raiderImageView.setFitWidth(20);
-        raiderImageView.setFitHeight(30);
-        Group raider = new Group();
-        pane.getChildren().add(raider);
-        Path path2 = new Path();
-        path2.getElements().add(new MoveTo(FirstMap.getFirstMap().getPath().get(0).getX(),FirstMap.getFirstMap().getPath().get(0).getY()));
-        boolean isFirstTime = true;
-        for(Coordinate coordinate : FirstMap.getFirstMap().getPath()){
-            if(!isFirstTime){
-                path2.getElements().add(new LineTo(coordinate.getX(),coordinate.getY()));
+        nextWave_btn.setOnMouseClicked(mouseEvent -> {
+            nextWave.set(true);
+            addNextButton();
+        });
+
+        new Thread(() -> {
+            while (waveIndex.get() < 3) {
+                Platform.runLater(() -> {
+                    if (nextWave.get() && waveIndex.get() < 3) {
+                        Wave wave = FirstMap.getFirstMap().getWaves().get(waveIndex.get());
+                        addRaiderToMap(0,wave);
+                        waveIndex.incrementAndGet();
+                        updateWave(waveIndex);
+                        nextWave.set(false);
+                    }
+                });
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
-            isFirstTime = false;
-        }
-        PathTransition pathTransition = new PathTransition();
-        pathTransition.setPath(path2);
-        pathTransition.setDuration(Duration.seconds(60));
-        pathTransition.setNode(raider);
-        pathTransition.play();
-
-
-
-        Timeline t = new Timeline();
-        t.setCycleCount(Timeline.INDEFINITE);
-        t.getKeyFrames().add(new KeyFrame(
-                Duration.millis(500),(ActionEvent event3) ->{
-            raider.getChildren().setAll(raiderImageView);
-        }
-        ));
-        t.getKeyFrames().add(new KeyFrame(
-                Duration.millis(1000),(ActionEvent event3) ->{
-            raider.getChildren().setAll(raiderImageView3);
-        }
-        ));
-        t.getKeyFrames().add(new KeyFrame(
-                Duration.millis(1500),(ActionEvent event3) ->{
-            raider.getChildren().setAll(raiderImageView4);
-        }
-        ));
-        t.play();
+        }).start();
     }
 
     @FXML
@@ -350,6 +328,17 @@ public class HomeController implements Initializable {
 
 
     }
+    public void addNextButton(){
+        if(nextWave_btn==null){
+            nextWave_btn = new Button();
+            nextWave_btn.setText("Start");
+            nextWave_btn.setLayoutX(75);
+            pane.getChildren().add(nextWave_btn);
+            nextWave_btn.setStyle("-fx-background-color: #FF5733; -fx-text-fill: white");
+        }else{
+            nextWave_btn.setText("Next Wave");
+        }
+    }
     @FXML
     void secondLevelAction(MouseEvent event) {
         addMapPic("second map.jpg");
@@ -357,12 +346,7 @@ public class HomeController implements Initializable {
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
         managePopUp();
-
-        Button nextWave_btn = new Button();
-        nextWave_btn.setText("Start");
-        nextWave_btn.setLayoutX(75);
-        pane.getChildren().add(nextWave_btn);
-        nextWave_btn.setStyle("-fx-background-color: #FF5733; -fx-text-fill: white");
+        addNextButton();
 
         AtomicInteger waveIndex = new AtomicInteger(0);
         AtomicBoolean nextWave = new AtomicBoolean(false);
@@ -371,9 +355,7 @@ public class HomeController implements Initializable {
 
         nextWave_btn.setOnMouseClicked(mouseEvent -> {
             nextWave.set(true);
-            if(waveIndex.get()==0){
-                nextWave_btn.setText("Next Wave");
-            }
+            addNextButton();
         });
 
         new Thread(() -> {
@@ -383,7 +365,6 @@ public class HomeController implements Initializable {
                         Wave wave = SecondMap.getSecondMap().getWaves().get(waveIndex.get());
                         addRaiderToMap(0,wave);
                         waveIndex.incrementAndGet();
-                        //wave_lbl.setText("Waves: "+waveIndex+"/3");
                         updateWave(waveIndex);
                         nextWave.set(false);
                     }
@@ -405,60 +386,37 @@ public class HomeController implements Initializable {
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
         managePopUp();
-        int i=0;
-        boolean nextWave = true;
-        while(nextWave && i<ThirdMap.getThirdMap().getWaves().size()){
-            Wave wave = ThirdMap.getThirdMap().getWaves().get(i);
-            ArrayList<Group> raiderGroups = new ArrayList<>();
-            Platform.runLater(()->{
-                for(Raider raider : wave.getRaiders()){
-                    ArrayList<ImageView> raiderImageViews = new ArrayList<>();
-                    for(String path : raider.getPhotoAddresses()){
-                        Image image = new Image(HelloApplication.class.getResource(path).toExternalForm());
-                        ImageView imageView = new ImageView(image);
-                        imageView.setFitWidth(20);
-                        imageView.setFitHeight(30);
-                        raiderImageViews.add(imageView);
-                    }
-                    Group raiderGroup = new Group();
-                    raiderGroups.add(raiderGroup);
-                    pane.getChildren().add(raiderGroup);
-                    Path path2 = new Path();
-                    path2.getElements().add(new MoveTo(ThirdMap.getThirdMap().getPath().get(0).getX(),ThirdMap.getThirdMap().getPath().get(0).getY()));
-                    boolean isFirstTime = true;
-                    for(Coordinate coordinate : ThirdMap.getThirdMap().getPath()){
-                        if(!isFirstTime){
-                            path2.getElements().add(new LineTo(coordinate.getX(),coordinate.getY()));
-                        }
-                        isFirstTime = false;
-                    }
-                    PathTransition pathTransition = new PathTransition();
-                    pathTransition.setPath(path2);
-                    pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
-                    pathTransition.setNode(raiderGroup);
-                    pathTransition.play();
+        addNextButton();
 
-                    Timeline t = new Timeline();
-                    t.setCycleCount(Timeline.INDEFINITE);
-                    int j=1;
-                    for(ImageView raiderImageView : raiderImageViews){
-                        t.getKeyFrames().add(new KeyFrame(
-                                Duration.millis(j*200),(ActionEvent event3) ->{
-                            raiderGroup.getChildren().setAll(raiderImageView);
-                        }
-                        ));
-                        j++;
-                    }
-                    t.play();
+        AtomicInteger waveIndex = new AtomicInteger(0);
+        AtomicBoolean nextWave = new AtomicBoolean(false);
+        addWavePic();
+        updateWave(waveIndex);
 
+        nextWave_btn.setOnMouseClicked(mouseEvent -> {
+            nextWave.set(true);
+            addNextButton();
+        });
+
+        new Thread(() -> {
+            while (waveIndex.get() < 3) {
+                Platform.runLater(() -> {
+                    if (nextWave.get() && waveIndex.get() < 3) {
+                        Wave wave = ThirdMap.getThirdMap().getWaves().get(waveIndex.get());
+                        addRaiderToMap(0,wave);
+                        waveIndex.incrementAndGet();
+                        updateWave(waveIndex);
+                        nextWave.set(false);
+                    }
+                });
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            });
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-        }
+            }
+        }).start();
     }
 
     @FXML

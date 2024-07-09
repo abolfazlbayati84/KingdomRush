@@ -1,8 +1,10 @@
 package org.example.kingdomrush.Model.Raiders;
 
+import javafx.scene.image.ImageView;
+
 import java.util.ArrayList;
 
-abstract public class Raider {
+abstract public class Raider extends ImageView {
     private int healthCondition;
     private int speed;
     private int loot;

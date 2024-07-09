@@ -46,7 +46,7 @@ public class ThirdMap extends Map{
         path.add(new Coordinate(523.2,377.6));
 
         getWaves().add(createWave(3,0,2,5));
-        getWaves().add(createWave(2,3,3,1));
+        getWaves().add(createWave(2,3,3,2));
         getWaves().add(createWave(0,5,2,3));
     }
     public Wave createWave(int crabs,int darkNights,int ghosts,int spiders){

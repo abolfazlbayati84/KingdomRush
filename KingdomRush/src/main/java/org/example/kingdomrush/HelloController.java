@@ -36,6 +36,7 @@ public class HelloController {
     @FXML
     void exitAction(MouseEvent event) {
 
+        System.exit(0);
     }
 
     @FXML
