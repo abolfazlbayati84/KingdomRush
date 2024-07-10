@@ -1,7 +1,10 @@
 package org.example.kingdomrush.Model.Tower;
 
+import javafx.animation.Timeline;
 import javafx.scene.image.ImageView;
 import org.example.kingdomrush.Model.Map.Coordinate;
+
+import java.util.Timer;
 
 abstract public class Tower extends ImageView{
     private int damagePower;
@@ -11,6 +14,7 @@ abstract public class Tower extends ImageView{
     private Coordinate coordinate;
     private int attackRange;
     private int level;
+    private Timer timer;
 
     public Tower(int damagePower, int buildPrice, Coordinate coordinate,int attackRange) {
         this.damagePower = damagePower;
@@ -31,6 +35,14 @@ abstract public class Tower extends ImageView{
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 
     public int getAttackRange() {

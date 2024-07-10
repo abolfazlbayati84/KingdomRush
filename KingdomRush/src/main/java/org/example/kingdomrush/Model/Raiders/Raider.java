@@ -10,12 +10,14 @@ abstract public class Raider extends ImageView {
     private int loot;
     private boolean isFlying;
     private ArrayList<String> photoAddresses;
+    private boolean isRaiderKilled;
 
     public Raider(int healthCondition, int speed, int loot) {
         this.healthCondition = healthCondition;
         this.speed = speed;
         this.loot = loot;
         photoAddresses = new ArrayList<>();
+        isRaiderKilled = false;
     }
     abstract public void move();
 
@@ -37,6 +39,14 @@ abstract public class Raider extends ImageView {
 
     public boolean isFlying() {
         return isFlying;
+    }
+
+    public boolean isRaiderKilled() {
+        return isRaiderKilled;
+    }
+
+    public void setRaiderKilled(boolean raiderKilled) {
+        isRaiderKilled = raiderKilled;
     }
 
     public void setHealthCondition(int healthCondition) {

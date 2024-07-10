@@ -1,0 +1,25 @@
+package org.example.kingdomrush;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+
+public class LostPageController {
+
+    @FXML
+    private ImageView home_img;
+
+    @FXML
+    private AnchorPane initialAnchor;
+
+    @FXML
+    private Label lost_lbl;
+
+    @FXML
+    void homeAction(MouseEvent event) {
+
+    }
+
+}

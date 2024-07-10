@@ -106,8 +106,9 @@ public class HomeController implements Initializable {
     private Button nextWave_btn;
     private ImageView levelImage;
     private HBox upgradeHbox;
-    private java.util.Map<Tower,ImageView> map;
-
+    private java.util.Map<Tower,ImageView> levelMap;
+    private java.util.Map<Tower,ImageView> towerImageViewMap;
+    private int raiderCounter;
     public static Stage getStage() {
         return stage;
     }
@@ -166,17 +167,17 @@ public class HomeController implements Initializable {
                 String path = HelloApplication.class.getResource("two.png").toExternalForm();
                 Image image = new Image(path);
                 levelImage = new ImageView(image);
-                map.put(tower,levelImage);
+                levelMap.put(tower,levelImage);
             } else if (level == 3) {
                 String path = HelloApplication.class.getResource("three.png").toExternalForm();
                 Image image = new Image(path);
                 levelImage = new ImageView(image);
-                map.replace(tower,levelImage);
+                levelMap.replace(tower,levelImage);
             } else if (level == 4) {
                 String path = HelloApplication.class.getResource("four.png").toExternalForm();
                 Image image = new Image(path);
                 levelImage = new ImageView(image);
-                map.replace(tower,levelImage);
+                levelMap.replace(tower,levelImage);
             }
             levelImage.setFitHeight(20);
             levelImage.setFitWidth(20);
@@ -194,9 +195,10 @@ public class HomeController implements Initializable {
     public void destroyTower(ImageView towerImageView,Tower tower){
         MapController.getMapController().destroyTower(tower);
         pane.getChildren().remove(hBox);
-        pane.getChildren().remove(towerImageView);
+        ImageView imageView2 = towerImageViewMap.get(tower);
+        pane.getChildren().remove(imageView2);
         if(tower.getLevel()>1){
-            ImageView imageView = map.get(tower);
+            ImageView imageView = levelMap.get(tower);
             pane.getChildren().remove(imageView);
         }
     }
@@ -248,6 +250,7 @@ public class HomeController implements Initializable {
         imageView5.setLayoutY(towerCoordinates.get(finalI).getY()-30);
         imageView5.setFitHeight(50);
         imageView5.setFitWidth(70);
+        towerImageViewMap.put(tower,imageView5);
         imageView5.setOnMouseClicked(mouseEvent -> {
             addUpgradePopUp(finalI,towerCoordinates,tower,imageView5);
         });
@@ -290,14 +293,14 @@ public class HomeController implements Initializable {
                 imageView3.setOnMouseClicked(event3 ->{
                     if(MapController.getMapController().getCoins()>=100){
                         Tower tower = new Vizard(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY()));
-                        MapController.getMapController().addTower(new Vizard(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
+                        MapController.getMapController().addTower(tower,pane);
                         addTowerPic("mage.png",finalI,map.getTowerCoordinates(),tower);
                     }
                 });
                 imageView4.setOnMouseClicked(event4 ->{
                     if(MapController.getMapController().getCoins()>=125){
                         Tower tower = new MortarBomb(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY()));
-                        MapController.getMapController().addTower(new MortarBomb(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
+                        MapController.getMapController().addTower(tower,pane);
                         addTowerPic("artillery.png",finalI,map.getTowerCoordinates(),tower);
                     }
                 });
@@ -311,8 +314,9 @@ public class HomeController implements Initializable {
         MapController.getMapController().setMap(FirstMap.getFirstMap());
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
-        map = new HashMap<>();
-        //MapController.getMapController().towerWakeUp(pane);
+        levelMap = new HashMap<>();
+        towerImageViewMap = new HashMap<>();
+        raiderCounter = 0;
         managePopUp();
 
         addNextButton();
@@ -395,6 +399,36 @@ public class HomeController implements Initializable {
         pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
         pathTransition.setNode(raider);
         pathTransition.play();
+//        pathTransition.setOnFinished(actionEvent -> {
+//            if(!raider.isRaiderKilled()){
+//                MapController.getMapController().setPassedRaiders(MapController.getMapController().getPassedRaiders()+1);
+//                raiderCounter++;
+//                System.out.println(raiderCounter);
+//                if(MapController.getMapController().getPassedRaiders()==20){
+//                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("lost-page.fxml"));
+//                    Scene scene = null;
+//                    try {
+//                        scene = new Scene(fxmlLoader.load(), 900, 400);
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    stage.setTitle("Kingdom Rush");
+//                    stage.setScene(scene);
+//                    stage.show();
+//                } else if (raiderCounter==30) {
+//                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("win-page.fxml"));
+//                    Scene scene = null;
+//                    try {
+//                        scene = new Scene(fxmlLoader.load(), 900, 400);
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                    stage.setTitle("Kingdom Rush");
+//                    stage.setScene(scene);
+//                    stage.show();
+//                }
+//            }
+//        });
     }
     public void setTimelineForRaiders(ArrayList<ImageView> raiderImageViews,Raider raider,Wave wave,int i){
         Timeline t = new Timeline();
@@ -455,7 +489,9 @@ public class HomeController implements Initializable {
         MapController.getMapController().setMap(SecondMap.getSecondMap());
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
-        map = new HashMap<>();
+        levelMap = new HashMap<>();
+        towerImageViewMap = new HashMap<>();
+        raiderCounter = 0;
         managePopUp();
         addNextButton();
 
@@ -496,7 +532,9 @@ public class HomeController implements Initializable {
         MapController.getMapController().setMap(ThirdMap.getThirdMap());
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
-        map = new HashMap<>();
+        levelMap = new HashMap<>();
+        towerImageViewMap = new HashMap<>();
+        raiderCounter = 0;
         managePopUp();
         addNextButton();
 
