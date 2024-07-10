@@ -1,11 +1,21 @@
 package org.example.kingdomrush.Controller;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
+import org.example.kingdomrush.HelloApplication;
 import org.example.kingdomrush.HomeController;
 import org.example.kingdomrush.Model.Map.Map;
+import org.example.kingdomrush.Model.Raiders.Ghost;
 import org.example.kingdomrush.Model.Raiders.Raider;
+import org.example.kingdomrush.Model.Tower.MortarBomb;
 import org.example.kingdomrush.Model.Tower.Tower;
 
 import java.util.ArrayList;
@@ -27,30 +37,74 @@ public class MapController {
         }
         return mapController;
     }
+    public void destroyTower(Tower tower){
+        towers.remove(tower);
+        coins+=(tower.getBuildPrice())/2;
+        HomeController.getCoinNumber().setText(" "+coins);
+    }
 
+    public void sendStone(Pane pane, Node node,Tower tower){
+
+        String path = HelloApplication.class.getResource("stone.png").toExternalForm();
+        Image image = new Image(path);
+        ImageView stone = new ImageView(image);
+        stone.setFitWidth(30);
+        stone.setFitHeight(30);
+        stone.setLayoutX(tower.getCoordinate().getX());
+        stone.setLayoutY(tower.getCoordinate().getY());
+        Platform.runLater(()->{
+            pane.getChildren().addAll(stone);
+        });
+        Timeline timeline = new Timeline();
+        float initialX = (float) (tower.getCoordinate().getX());
+        float initialY = (float) (tower.getCoordinate().getY());
+
+        double shiftX = node.getBoundsInParent().getCenterX() - initialX;
+        double shiftY = node.getBoundsInParent().getCenterY() - initialY;
+
+        KeyValue keyValueX = new KeyValue(stone.translateXProperty(), shiftX);
+        KeyValue keyValueY = new KeyValue(stone.translateYProperty(), shiftY);
+
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1),  keyValueY,keyValueX);
+        timeline.getKeyFrames().add(keyFrame);
+
+        timeline.setCycleCount(1);
+        timeline.play();
+        timeline.setOnFinished(e->{
+            pane.getChildren().remove(stone);
+            Raider raider = (Raider) node;
+            if(raider.getHealthCondition()<0){
+                Platform.runLater(()->{
+                    pane.getChildren().remove(node);
+                    //r.getTimeLineAnimation().stop();
+                });
+            }
+
+        });
+    }
     public void towerWakeUp(Pane pane,Tower tower){
         Timer timer = new Timer();
-        final int[] i = {0};
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 for(Node node : pane.getChildren()){
                     if(node instanceof Raider){
-                        System.out.println("A");
+
                         Raider raider = (Raider) node;
                         double tempDistance = Math.sqrt(Math.pow(tower.getCoordinate().getY()- node.getBoundsInParent().getCenterY()-5,2)+
                                 Math.pow(tower.getCoordinate().getX() - node.getBoundsInParent().getCenterX()-5,2));
 
-                        System.out.println(tempDistance);
-                        //System.out.println("Tower X = "+tower.getBoundsInParent().getCenterX()+"\t Y = "+tower.getBoundsInParent().getCenterY());
-                        if(tempDistance<tower.getAttackRange()){
-                            //TODO
-                            System.out.println("B");
-                            System.out.println(i[0]++);
+
+                        if(tempDistance<tower.getAttackRange() && !(raider instanceof Ghost && tower instanceof MortarBomb) && towers.contains(tower)){
+                            if(tower instanceof MortarBomb){
+                                Platform.runLater(()->{
+                                    sendStone(pane,raider,tower);
+                                });
+                            }
                             raider.setHealthCondition(raider.getHealthCondition()-tower.getDamagePower());
                         }
                         if(raider.getHealthCondition()<0){
-                            System.out.println("C");
+
                             Platform.runLater(()->{
                                 pane.getChildren().remove(raider);
                                 coins+=raider.getLoot();
@@ -63,35 +117,16 @@ public class MapController {
             }
         },1000,500);
 
-//        new Thread (()->{
-//            while(true){
-//                for(Node node : pane.getChildren()){
-//                    System.out.println("A");
-//                    if(node instanceof Raider){
-//                        System.out.println("B");
-//                        Raider raider = (Raider) node;
-//                        double tempDistance = Math.sqrt(Math.pow(tower.getBoundsInParent().getCenterY() - node.getBoundsInParent().getCenterY(),2)+
-//                                Math.pow(tower.getBoundsInParent().getCenterX() - node.getBoundsInParent().getCenterX(),2));
-//
-//                        if(tempDistance<tower.getAttackRange()){
-//                            //TODO
-//                            System.out.println("C");
-//                            System.out.println(i[0]++);
-//                            raider.setHealthCondition(raider.getHealthCondition()-tower.getDamagePower());
-//                        }
-//                        if(raider.getHealthCondition()<0){
-//                            System.out.println("D");
-//                            Platform.runLater(()->{
-//                                pane.getChildren().remove(raider);
-//                                coins+=raider.getLoot();
-//                                HomeController.getCoinNumber().setText(" "+coins);
-//                            });
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//        }).start();
+    }
+    public boolean upgradeTower(Tower tower){
+        if(coins>=110 && (tower.getLevel() < PlayerController.getPlayerController().getPlayer().getLevel())){
+            coins-=110;
+            tower.setLevel(tower.getLevel()+1);
+            tower.setDamagePower(tower.getDamagePower()+5);
+            return true;
+        }else{
+            return false;
+        }
     }
     public int getCoins() {
         return coins;

@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -32,12 +33,14 @@ import org.example.kingdomrush.Model.Player.Player;
 import org.example.kingdomrush.Model.Raiders.Raider;
 import org.example.kingdomrush.Model.Tower.Archer;
 import org.example.kingdomrush.Model.Tower.MortarBomb;
+import org.example.kingdomrush.Model.Tower.Tower;
 import org.example.kingdomrush.Model.Tower.Vizard;
 import javafx.animation.PathTransition;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -101,6 +104,9 @@ public class HomeController implements Initializable {
     private ImageView raiderImageView;
     private Label wave_lbl;
     private Button nextWave_btn;
+    private ImageView levelImage;
+    private HBox upgradeHbox;
+    private java.util.Map<Tower,ImageView> map;
 
     public static Stage getStage() {
         return stage;
@@ -152,7 +158,88 @@ public class HomeController implements Initializable {
             pane.getChildren().add(hBox);
         }
     }
-    public void addTowerPic(String picAddress,int finalI,ArrayList<Coordinate> towerCoordinates,Map map){
+    public void upgradeHandle(Tower tower){
+        pane.getChildren().remove(hBox);
+        if(MapController.getMapController().upgradeTower(tower)){
+            int level = tower.getLevel();
+            if(level == 2){
+                String path = HelloApplication.class.getResource("two.png").toExternalForm();
+                Image image = new Image(path);
+                levelImage = new ImageView(image);
+                map.put(tower,levelImage);
+            } else if (level == 3) {
+                String path = HelloApplication.class.getResource("three.png").toExternalForm();
+                Image image = new Image(path);
+                levelImage = new ImageView(image);
+                map.replace(tower,levelImage);
+            } else if (level == 4) {
+                String path = HelloApplication.class.getResource("four.png").toExternalForm();
+                Image image = new Image(path);
+                levelImage = new ImageView(image);
+                map.replace(tower,levelImage);
+            }
+            levelImage.setFitHeight(20);
+            levelImage.setFitWidth(20);
+            levelImage.setLayoutX(tower.getCoordinate().getX()+30);
+            levelImage.setLayoutY(tower.getCoordinate().getY()-30);
+            pane.getChildren().add(levelImage);
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText(null);
+            alert.setContentText("You can upgrade the towers up to your level.");
+            alert.showAndWait();
+        }
+    }
+    public void destroyTower(ImageView towerImageView,Tower tower){
+        MapController.getMapController().destroyTower(tower);
+        pane.getChildren().remove(hBox);
+        pane.getChildren().remove(towerImageView);
+        if(tower.getLevel()>1){
+            ImageView imageView = map.get(tower);
+            pane.getChildren().remove(imageView);
+        }
+    }
+    public void addUpgradePopUp(int finalI,ArrayList<Coordinate> towerCoordinates,Tower tower,ImageView towerImageView){
+        if(tower.getLevel()!=4){
+            String upgradePath = HelloApplication.class.getResource("upgrade (2).png").toExternalForm();
+            String destroyPath = HelloApplication.class.getResource("destroy.png").toExternalForm();
+
+            Image upgradeImage = new Image(upgradePath);
+            Image destroyImage = new Image(destroyPath);
+
+            ImageView upgradeImageView = new ImageView(upgradeImage);
+            ImageView destroyImageView = new ImageView(destroyImage);
+
+            upgradeImageView.setOnMouseClicked(mouseEvent -> {
+                upgradeHandle(tower);
+            });
+            destroyImageView.setOnMouseClicked(mouseEvent -> {
+                destroyTower(towerImageView,tower);
+            });
+
+            upgradeImageView.setFitWidth(20);
+            upgradeImageView.setFitHeight(20);
+            destroyImageView.setFitWidth(20);
+            destroyImageView.setFitHeight(20);
+
+            hBox = new HBox();
+            hBox.getChildren().add(upgradeImageView);
+            hBox.getChildren().add(destroyImageView);
+
+            hBox.setLayoutX(towerCoordinates.get(finalI).getX() - 30);
+            hBox.setLayoutY(towerCoordinates.get(finalI).getY() - 30);
+
+            pane.getChildren().add(hBox);
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText(null);
+            alert.setContentText("The tower can't be upgraded anymore.");
+            alert.showAndWait();
+        }
+    }
+    public void addTowerPic(String picAddress,int finalI,ArrayList<Coordinate> towerCoordinates,Tower tower){
         pane.getChildren().remove(hBox);
         String path5=HelloApplication.class.getResource(picAddress).toExternalForm();
         image5=new Image(path5);
@@ -161,6 +248,9 @@ public class HomeController implements Initializable {
         imageView5.setLayoutY(towerCoordinates.get(finalI).getY()-30);
         imageView5.setFitHeight(50);
         imageView5.setFitWidth(70);
+        imageView5.setOnMouseClicked(mouseEvent -> {
+            addUpgradePopUp(finalI,towerCoordinates,tower,imageView5);
+        });
         pane.getChildren().add(imageView5);
         addNumberOfCoins();
     }
@@ -192,20 +282,23 @@ public class HomeController implements Initializable {
                 addPopUp(finalI,map.getTowerCoordinates(),map);
                 imageView2.setOnMouseClicked(event2 ->{
                     if(MapController.getMapController().getCoins()>=70){
-                        MapController.getMapController().addTower(new Archer(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
-                        addTowerPic("archer.png",finalI,map.getTowerCoordinates(),map);
+                        Tower tower = new Archer(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY()));
+                        MapController.getMapController().addTower(tower,pane);
+                        addTowerPic("archer.png",finalI,map.getTowerCoordinates(),tower);
                     }
                 });
                 imageView3.setOnMouseClicked(event3 ->{
                     if(MapController.getMapController().getCoins()>=100){
+                        Tower tower = new Vizard(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY()));
                         MapController.getMapController().addTower(new Vizard(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
-                        addTowerPic("mage.png",finalI,map.getTowerCoordinates(),map);
+                        addTowerPic("mage.png",finalI,map.getTowerCoordinates(),tower);
                     }
                 });
                 imageView4.setOnMouseClicked(event4 ->{
                     if(MapController.getMapController().getCoins()>=125){
+                        Tower tower = new MortarBomb(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY()));
                         MapController.getMapController().addTower(new MortarBomb(new Coordinate(map.getTowerCoordinates().get(finalI).getX(),map.getTowerCoordinates().get(finalI).getY())),pane);
-                        addTowerPic("artillery.png",finalI,map.getTowerCoordinates(),map);
+                        addTowerPic("artillery.png",finalI,map.getTowerCoordinates(),tower);
                     }
                 });
             });
@@ -218,6 +311,7 @@ public class HomeController implements Initializable {
         MapController.getMapController().setMap(FirstMap.getFirstMap());
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
+        map = new HashMap<>();
         //MapController.getMapController().towerWakeUp(pane);
         managePopUp();
 
@@ -361,6 +455,7 @@ public class HomeController implements Initializable {
         MapController.getMapController().setMap(SecondMap.getSecondMap());
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
+        map = new HashMap<>();
         managePopUp();
         addNextButton();
 
@@ -401,6 +496,7 @@ public class HomeController implements Initializable {
         MapController.getMapController().setMap(ThirdMap.getThirdMap());
         addNumberOfCoins();
         pane.getChildren().add(coinNumber);
+        map = new HashMap<>();
         managePopUp();
         addNextButton();
 

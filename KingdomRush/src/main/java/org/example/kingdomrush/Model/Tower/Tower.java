@@ -10,18 +10,28 @@ abstract public class Tower extends ImageView{
     private double y;
     private Coordinate coordinate;
     private int attackRange;
+    private int level;
 
     public Tower(int damagePower, int buildPrice, Coordinate coordinate,int attackRange) {
         this.damagePower = damagePower;
         this.buildPrice = buildPrice;
         this.coordinate = coordinate;
         this.attackRange = attackRange;
+        this.level = 1;
     }
     abstract void defence();
 
     abstract void promoteTower();
 
     abstract void ruin();
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
     public int getAttackRange() {
         return attackRange;

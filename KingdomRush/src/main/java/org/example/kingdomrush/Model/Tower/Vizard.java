@@ -5,7 +5,7 @@ import org.example.kingdomrush.Model.Map.Coordinate;
 public class Vizard extends Tower{
 
     public Vizard(Coordinate coordinate) {
-        super(15, 100, coordinate,90);
+        super(7, 100, coordinate,90);
     }
 
     @Override
