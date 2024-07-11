@@ -5,6 +5,8 @@ import Model.MySQL.MySQL;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Player {
     static private Player player;
@@ -13,10 +15,10 @@ public class Player {
     private String password;
     private int level;
     private int diamond;
-    private ArrayList<String> backpack;
     private boolean isLoggedIn=false;
+    private Map<Spells,Integer> backpack;
     private Player(){
-        backpack=new ArrayList<>();
+        backpack = new HashMap<Spells, Integer>();
     }
 
     static public Player getPlayer() {
@@ -38,9 +40,35 @@ public class Player {
             this.level=rs.getInt(4);
             this.diamond=rs.getInt(5);
             this.isLoggedIn=true;
+            getSpellsFromDB();
         }
         else
             throw new UserNotFound();
+    }
+    public void getSpellsFromDB() throws Exception {
+        String sqlCmd = "SELECT * from backpack where playerID = '"+this.id+"'";
+        MySQL sql = new MySQL();
+        ResultSet rs = sql.executeQuery(sqlCmd);
+        String spell;
+        backpack.put(Spells.HealthKit,0);
+        backpack.put(Spells.Freeze,0);
+        backpack.put(Spells.Coin,0);
+        backpack.put(Spells.LittleChild,0);
+        while(rs.next()){
+            spell = rs.getString(2);
+            if(spell.equals("HealthKit")){
+                backpack.replace(Spells.HealthKit,backpack.get(Spells.HealthKit)+1);
+            }
+            if(spell.equals("Freeze")){
+                backpack.replace(Spells.Freeze,backpack.get(Spells.Freeze)+1);
+            }
+            if(spell.equals("Coin")){
+                backpack.replace(Spells.Coin,backpack.get(Spells.Coin)+1);
+            }
+            if(spell.equals("LittleChild")){
+                backpack.replace(Spells.LittleChild, backpack.get(Spells.LittleChild)+1);
+            }
+        }
     }
     public void logout(){
         this.isLoggedIn = false;
@@ -105,7 +133,7 @@ public class Player {
         return diamond;
     }
 
-    public ArrayList<String> getBackpack() {
+    public Map<Spells, Integer> getBackpack() {
         return backpack;
     }
 
@@ -136,7 +164,7 @@ public class Player {
         this.diamond = diamond;
     }
 
-    public void setBackpack(ArrayList<String> backpack) {
+    public void setBackpack(Map<Spells, Integer> backpack) {
         this.backpack = backpack;
     }
 

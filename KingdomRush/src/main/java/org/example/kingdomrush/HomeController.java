@@ -1,5 +1,6 @@
 package org.example.kingdomrush;
 
+import Model.Player.Spells;
 import javafx.animation.KeyFrame;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
@@ -8,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -18,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
@@ -108,6 +111,16 @@ public class HomeController implements Initializable {
     private java.util.Map<Tower,ImageView> levelMap;
     private java.util.Map<Tower,ImageView> towerImageViewMap;
     private int raiderCounter;
+    private ImageView heartImageView;
+    private Label heartLabel;
+    private VBox heartVbox;
+    private VBox freezeVbox;
+    private VBox coinVbox;
+    private VBox littleChildVbox;
+    private Label heartSpell_lbl;
+    private Label freezeSpell_lbl;
+    private Label coinSpell_lbl;
+    private Label littleChildSpell_lbl;
     public static Stage getStage() {
         return stage;
     }
@@ -315,6 +328,9 @@ public class HomeController implements Initializable {
         pane.getChildren().add(coinNumber);
         levelMap = new HashMap<>();
         towerImageViewMap = new HashMap<>();
+        heartLabel = new Label();
+        addHeartToMap();
+        addBackpackContent();
         raiderCounter = 0;
         managePopUp();
 
@@ -401,9 +417,11 @@ public class HomeController implements Initializable {
         pathTransition.setOnFinished(actionEvent -> {
             if(!raider.isRaiderKilled()){
                 MapController.getMapController().setPassedRaiders(MapController.getMapController().getPassedRaiders()+1);
+                heartLabel.setText(MapController.getMapController().getPassedRaiders()+"/"+20);
                 raiderCounter++;
-                System.out.println(raiderCounter);
+                pane.getChildren().remove(raider);
                 if(MapController.getMapController().getPassedRaiders()==20){
+                    MapController.getMapController().setPassedRaiders(0);
                     FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("lost-page.fxml"));
                     Scene scene = null;
                     try {
@@ -471,6 +489,22 @@ public class HomeController implements Initializable {
         setTimelineForRaiders(raiderImageViews,raider,wave,i);
 
     }
+    public void addHeartToMap(){
+        Image image = new Image(HelloApplication.class.getResource("heart-icon-3335.png").toExternalForm());
+        ImageView imageView = new ImageView(image);
+        heartImageView = new ImageView(image);
+        heartImageView.setFitWidth(30);
+        heartImageView.setFitHeight(30);
+        heartImageView.setLayoutY(50);
+        pane.getChildren().add(heartImageView);
+        heartLabel.setText(MapController.getMapController().getPassedRaiders()+"/"+20);
+        heartLabel.setLayoutY(50);
+        heartLabel.setLayoutX(32);
+        Font font = new Font("Arial",24);
+        heartLabel.setTextFill(Color.WHITE);
+        heartLabel.setFont(font);
+        pane.getChildren().add(heartLabel);
+    }
     public void addNextButton(){
         if(nextWave_btn==null){
             nextWave_btn = new Button();
@@ -482,6 +516,65 @@ public class HomeController implements Initializable {
             nextWave_btn.setText("Next Wave");
         }
     }
+    public void manageLabelForBackpack(Label label,Spells spell,VBox vBox){
+        Font font = new Font("Arial",16);
+        label.setText(PlayerController.getPlayerController().getPlayer().getBackpack().get(spell).toString());
+        label.setAlignment(Pos.CENTER);
+        label.setMinWidth(30);
+        label.setFont(font);
+        vBox.getChildren().add(label);
+    }
+    public void addBackpackContent(){
+        heartSpell_lbl = new Label();
+        freezeSpell_lbl = new Label();
+        coinSpell_lbl = new Label();
+        littleChildSpell_lbl = new Label();
+
+        heartVbox = new VBox();
+        freezeVbox = new VBox();
+        coinVbox = new VBox();
+        littleChildVbox = new VBox();
+        HBox spellHBox = new HBox();
+        String path1 = HelloApplication.class.getResource("heart-icon-3335.png").toExternalForm();
+        String path2 = HelloApplication.class.getResource("ice-png-31294.png").toExternalForm();
+        String path3 = HelloApplication.class.getResource("dollar-icon-png-3537.png").toExternalForm();
+        String path4 = HelloApplication.class.getResource("bomb-icon-28185.png").toExternalForm();
+        Image image1 = new Image(path1);
+        Image image2 = new Image(path2);
+        Image image3 = new Image(path3);
+        Image image4 = new Image(path4);
+        ImageView heartImageView = new ImageView(image1);
+        ImageView freezeImageView = new ImageView(image2);
+        ImageView coinImageView = new ImageView(image3);
+        ImageView littleChildImageView = new ImageView(image4);
+        heartImageView.setFitHeight(30);
+        heartImageView.setFitWidth(30);
+        heartVbox.getChildren().add(heartImageView);
+
+        freezeImageView.setFitWidth(30);
+        freezeImageView.setFitHeight(30);
+        freezeVbox.getChildren().add(freezeImageView);
+
+        coinImageView.setFitHeight(30);
+        coinImageView.setFitWidth(30);
+        coinVbox.getChildren().add(coinImageView);
+
+        littleChildImageView.setFitWidth(30);
+        littleChildImageView.setFitHeight(30);
+        littleChildVbox.getChildren().add(littleChildImageView);
+
+        manageLabelForBackpack(heartSpell_lbl,Spells.HealthKit,heartVbox);
+        manageLabelForBackpack(freezeSpell_lbl,Spells.Freeze,freezeVbox);
+        manageLabelForBackpack(coinSpell_lbl,Spells.Coin,coinVbox);
+        manageLabelForBackpack(littleChildSpell_lbl,Spells.LittleChild,littleChildVbox);
+
+        spellHBox.getChildren().add(heartVbox);
+        spellHBox.getChildren().add(freezeVbox);
+        spellHBox.getChildren().add(coinVbox);
+        spellHBox.getChildren().add(littleChildVbox);
+        spellHBox.setLayoutX(180);
+        pane.getChildren().add(spellHBox);
+    }
     @FXML
     void secondLevelAction(MouseEvent event) {
         addMapPic("second map.jpg");
@@ -490,6 +583,9 @@ public class HomeController implements Initializable {
         pane.getChildren().add(coinNumber);
         levelMap = new HashMap<>();
         towerImageViewMap = new HashMap<>();
+        heartLabel = new Label();
+        addHeartToMap();
+        addBackpackContent();
         raiderCounter = 0;
         managePopUp();
         addNextButton();
@@ -533,6 +629,9 @@ public class HomeController implements Initializable {
         pane.getChildren().add(coinNumber);
         levelMap = new HashMap<>();
         towerImageViewMap = new HashMap<>();
+        heartLabel = new Label();
+        addHeartToMap();
+        addBackpackContent();
         raiderCounter = 0;
         managePopUp();
         addNextButton();
