@@ -11,9 +11,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.example.kingdomrush.Controller.PlayerController;
-import org.example.kingdomrush.Exceptions.NotEnoughDiamonds;
-import org.example.kingdomrush.Model.Player.Player;
+import Controller.PlayerController;
+import Exceptions.NotEnoughDiamonds;
+import Model.Player.Player;
 
 import java.io.IOException;
 import java.net.URL;

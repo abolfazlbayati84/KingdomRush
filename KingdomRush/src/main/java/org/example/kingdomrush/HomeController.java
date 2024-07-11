@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -27,14 +26,14 @@ import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.example.kingdomrush.Controller.*;
-import org.example.kingdomrush.Model.Map.*;
-import org.example.kingdomrush.Model.Player.Player;
-import org.example.kingdomrush.Model.Raiders.Raider;
-import org.example.kingdomrush.Model.Tower.Archer;
-import org.example.kingdomrush.Model.Tower.MortarBomb;
-import org.example.kingdomrush.Model.Tower.Tower;
-import org.example.kingdomrush.Model.Tower.Vizard;
+import Controller.*;
+import Model.Map.*;
+import Model.Player.Player;
+import Model.Raiders.Raider;
+import Model.Tower.Archer;
+import Model.Tower.MortarBomb;
+import Model.Tower.Tower;
+import Model.Tower.Vizard;
 import javafx.animation.PathTransition;
 
 import java.io.IOException;
@@ -399,36 +398,36 @@ public class HomeController implements Initializable {
         pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
         pathTransition.setNode(raider);
         pathTransition.play();
-//        pathTransition.setOnFinished(actionEvent -> {
-//            if(!raider.isRaiderKilled()){
-//                MapController.getMapController().setPassedRaiders(MapController.getMapController().getPassedRaiders()+1);
-//                raiderCounter++;
-//                System.out.println(raiderCounter);
-//                if(MapController.getMapController().getPassedRaiders()==20){
-//                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("lost-page.fxml"));
-//                    Scene scene = null;
-//                    try {
-//                        scene = new Scene(fxmlLoader.load(), 900, 400);
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    stage.setTitle("Kingdom Rush");
-//                    stage.setScene(scene);
-//                    stage.show();
-//                } else if (raiderCounter==30) {
-//                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("win-page.fxml"));
-//                    Scene scene = null;
-//                    try {
-//                        scene = new Scene(fxmlLoader.load(), 900, 400);
-//                    } catch (IOException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                    stage.setTitle("Kingdom Rush");
-//                    stage.setScene(scene);
-//                    stage.show();
-//                }
-//            }
-//        });
+        pathTransition.setOnFinished(actionEvent -> {
+            if(!raider.isRaiderKilled()){
+                MapController.getMapController().setPassedRaiders(MapController.getMapController().getPassedRaiders()+1);
+                raiderCounter++;
+                System.out.println(raiderCounter);
+                if(MapController.getMapController().getPassedRaiders()==20){
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("lost-page.fxml"));
+                    Scene scene = null;
+                    try {
+                        scene = new Scene(fxmlLoader.load(), 900, 400);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    stage.setTitle("Kingdom Rush");
+                    stage.setScene(scene);
+                    stage.show();
+                } else if (raiderCounter==30) {
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("win-page.fxml"));
+                    Scene scene = null;
+                    try {
+                        scene = new Scene(fxmlLoader.load(), 900, 400);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    stage.setTitle("Kingdom Rush");
+                    stage.setScene(scene);
+                    stage.show();
+                }
+            }
+        });
     }
     public void setTimelineForRaiders(ArrayList<ImageView> raiderImageViews,Raider raider,Wave wave,int i){
         Timeline t = new Timeline();
@@ -476,7 +475,7 @@ public class HomeController implements Initializable {
         if(nextWave_btn==null){
             nextWave_btn = new Button();
             nextWave_btn.setText("Start");
-            nextWave_btn.setLayoutX(75);
+            nextWave_btn.setLayoutX(100);
             pane.getChildren().add(nextWave_btn);
             nextWave_btn.setStyle("-fx-background-color: #FF5733; -fx-text-fill: white");
         }else{
@@ -570,8 +569,12 @@ public class HomeController implements Initializable {
     }
 
     @FXML
-    void settingsAction(MouseEvent event) {
-
+    void settingsAction(MouseEvent event) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("settings-page.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 900, 400);
+        stage.setTitle("Kingdom Rush");
+        stage.setScene(scene);
+        stage.show();
     }
 
     @FXML

@@ -1,10 +1,12 @@
 package org.example.kingdomrush;
 
+import Controller.MediaPlayerController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import org.example.kingdomrush.Model.Player.Player;
+import Model.Player.Player;
 
 import java.io.IOException;
 
@@ -16,6 +18,11 @@ public class HelloApplication extends Application {
         LoginPageController.setStage(stage);
         HomeController.setStage(stage);
         ShopPageController.setStage(stage);
+        SettingsPageController.setStage(stage);
+        WinPageController.setStage(stage);
+        LostPageController.setStage(stage);
+
+        MediaPlayerController.getMediaPlayerController();
 
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 900, 400);

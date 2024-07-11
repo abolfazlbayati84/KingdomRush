@@ -10,8 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.example.kingdomrush.Controller.PlayerController;
-import org.example.kingdomrush.Exceptions.UserNotFound;
+import Controller.PlayerController;
+import Exceptions.UserNotFound;
 
 import java.io.IOException;
 
