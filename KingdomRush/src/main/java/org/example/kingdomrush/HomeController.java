@@ -178,6 +178,7 @@ public class HomeController implements Initializable {
     public void upgradeHandle(Tower tower){
         pane.getChildren().remove(hBox);
         if(MapController.getMapController().upgradeTower(tower)){
+            coinNumber.setText(" "+MapController.getMapController().getCoins());
             int level = tower.getLevel();
             if(level == 2){
                 String path = HelloApplication.class.getResource("two.png").toExternalForm();
@@ -373,12 +374,55 @@ public class HomeController implements Initializable {
 
     @FXML
     void fourthLevelAction(MouseEvent event) {
+        addMapPic("fourth map2.jpg");
+        MapController.getMapController().setMap(FourthMap.getFourthMap());
+        addNumberOfCoins();
+        pane.getChildren().add(coinNumber);
+        levelMap = new HashMap<>();
+        towerImageViewMap = new HashMap<>();
+        heartLabel = new Label();
+        addHeartToMap();
+        addBackpackContent();
+        raiderCounter = 0;
+        managePopUp();
 
-        scene.setOnMouseClicked(mouseEvent -> {
-            double x = mouseEvent.getSceneX();
-            double y = mouseEvent.getSceneY();
-            System.out.println("X = "+x+"\tY = "+y);
+        addNextButton();
+
+        AtomicInteger waveIndex = new AtomicInteger(0);
+        AtomicBoolean nextWave = new AtomicBoolean(false);
+        addWavePic();
+        updateWave(waveIndex);
+
+        nextWave_btn.setOnMouseClicked(mouseEvent -> {
+            nextWave.set(true);
+            addNextButton();
         });
+
+        new Thread(() -> {
+            while (waveIndex.get() < 3) {
+                Platform.runLater(() -> {
+                    if (nextWave.get() && waveIndex.get() < 3) {
+                        Wave wave = FourthMap.getFourthMap().getWaves().get(waveIndex.get());
+                        addRaiderToMap(0,wave);
+                        waveIndex.incrementAndGet();
+                        updateWave(waveIndex);
+                        nextWave.set(false);
+                    }
+                });
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+//        scene.setOnMouseClicked(mouseEvent -> {
+//            double x = mouseEvent.getSceneX();
+//            double y = mouseEvent.getSceneY();
+//            System.out.println("X = "+x+"\tY = "+y);
+//        });
+
     }
 
     public void updateWave(AtomicInteger waveIndex){
