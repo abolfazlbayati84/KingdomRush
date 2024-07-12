@@ -52,7 +52,8 @@ public class MapController {
         coins+=(tower.getBuildPrice())/2;
         HomeController.getCoinNumber().setText(" "+coins);
     }
-    public void sendFire(Pane pane,Node node,Tower tower){
+
+    public void sendFire(Pane pane, Node node, Tower tower) {
         String path = HelloApplication.class.getResource("fire.png").toExternalForm();
         Image image = new Image(path);
         ImageView fire = new ImageView(image);
@@ -60,40 +61,49 @@ public class MapController {
         fire.setFitHeight(10);
         fire.setLayoutX(tower.getCoordinate().getX());
         fire.setLayoutY(tower.getCoordinate().getY());
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             pane.getChildren().addAll(fire);
         });
-        Timeline timeline = new Timeline();
-        float initialX = (float) (tower.getCoordinate().getX());
-        float initialY = (float) (tower.getCoordinate().getY());
 
-        double shiftX = node.getBoundsInParent().getCenterX() - initialX;
-        double shiftY = node.getBoundsInParent().getCenterY() - initialY;
+        Timeline timeline = new Timeline();
+        float initialX = (float) tower.getCoordinate().getX();
+        float initialY = (float) tower.getCoordinate().getY();
+
+        double targetX = node.getBoundsInParent().getCenterX() - fire.getFitWidth() / 2;
+        double targetY = node.getBoundsInParent().getCenterY() - fire.getFitHeight() / 2;
+
+        double shiftX = targetX - initialX;
+        double shiftY = targetY - initialY;
+
+        double distance = Math.sqrt(shiftX * shiftX + shiftY * shiftY);
+        double speed = 200.0;
+        double durationInSeconds = distance / speed;
 
         KeyValue keyValueX = new KeyValue(fire.translateXProperty(), shiftX);
         KeyValue keyValueY = new KeyValue(fire.translateYProperty(), shiftY);
 
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1),  keyValueY,keyValueX);
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(durationInSeconds), keyValueY, keyValueX);
         timeline.getKeyFrames().add(keyFrame);
 
         timeline.setCycleCount(1);
         timeline.play();
-        timeline.setOnFinished(e->{
+        timeline.setOnFinished(e -> {
             pane.getChildren().remove(fire);
             Raider raider = (Raider) node;
-            if(raider.getHealthCondition()<0){
-                Platform.runLater(()->{
+            raider.setHealthCondition(raider.getHealthCondition() - tower.getDamagePower());
+            if (raider.getHealthCondition() <= 0) {
+                Platform.runLater(() -> {
                     raiders.remove(raider);
                     pane.getChildren().remove(node);
                     raider.setRaiderKilled(true);
-                    coins+=raider.getLoot();
-                    HomeController.getCoinNumber().setText(" "+coins);
+                    coins += raider.getLoot();
+                    HomeController.getCoinNumber().setText(" " + coins);
                 });
             }
-
         });
     }
-    public void sendArrow(Pane pane,Node node,Tower tower){
+
+    public void sendArrow(Pane pane, Node node, Tower tower) {
         String path = HelloApplication.class.getResource("arrow.png").toExternalForm();
         Image image = new Image(path);
         ImageView arrow = new ImageView(image);
@@ -101,37 +111,45 @@ public class MapController {
         arrow.setFitHeight(10);
         arrow.setLayoutX(tower.getCoordinate().getX());
         arrow.setLayoutY(tower.getCoordinate().getY());
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             pane.getChildren().addAll(arrow);
         });
-        Timeline timeline = new Timeline();
-        float initialX = (float) (tower.getCoordinate().getX());
-        float initialY = (float) (tower.getCoordinate().getY());
 
-        double shiftX = node.getBoundsInParent().getCenterX() - initialX;
-        double shiftY = node.getBoundsInParent().getCenterY() - initialY;
+        Timeline timeline = new Timeline();
+        float initialX = (float) tower.getCoordinate().getX();
+        float initialY = (float) tower.getCoordinate().getY();
+
+        double targetX = node.getBoundsInParent().getCenterX() - arrow.getFitWidth() / 2;
+        double targetY = node.getBoundsInParent().getCenterY() - arrow.getFitHeight() / 2;
+
+        double shiftX = targetX - initialX;
+        double shiftY = targetY - initialY;
+
+        double distance = Math.sqrt(shiftX * shiftX + shiftY * shiftY);
+        double speed = 200.0;
+        double durationInSeconds = distance / speed;
 
         KeyValue keyValueX = new KeyValue(arrow.translateXProperty(), shiftX);
         KeyValue keyValueY = new KeyValue(arrow.translateYProperty(), shiftY);
 
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1),  keyValueY,keyValueX);
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(durationInSeconds), keyValueY, keyValueX);
         timeline.getKeyFrames().add(keyFrame);
 
         timeline.setCycleCount(1);
         timeline.play();
-        timeline.setOnFinished(e->{
+        timeline.setOnFinished(e -> {
             pane.getChildren().remove(arrow);
             Raider raider = (Raider) node;
-            if(raider.getHealthCondition()<0){
-                Platform.runLater(()->{
+            raider.setHealthCondition(raider.getHealthCondition() - tower.getDamagePower());
+            if (raider.getHealthCondition() <= 0) {
+                Platform.runLater(() -> {
                     raiders.remove(raider);
                     pane.getChildren().remove(node);
                     raider.setRaiderKilled(true);
-                    coins+=raider.getLoot();
-                    HomeController.getCoinNumber().setText(" "+coins);
+                    coins += raider.getLoot();
+                    HomeController.getCoinNumber().setText(" " + coins);
                 });
             }
-
         });
     }
     public void damageNearRaiders(double x,double y,Pane pane){
@@ -159,8 +177,7 @@ public class MapController {
         }
     }
 
-    public void sendStone(Pane pane, Node node,Tower tower){
-
+    public void sendStone(Pane pane, Node node, Tower tower) {
         String path = HelloApplication.class.getResource("stone.png").toExternalForm();
         Image image = new Image(path);
         ImageView stone = new ImageView(image);
@@ -168,39 +185,46 @@ public class MapController {
         stone.setFitHeight(30);
         stone.setLayoutX(tower.getCoordinate().getX());
         stone.setLayoutY(tower.getCoordinate().getY());
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
             pane.getChildren().addAll(stone);
         });
 
         Timeline timeline = new Timeline();
-        float initialX = (float) (tower.getCoordinate().getX());
-        float initialY = (float) (tower.getCoordinate().getY());
+        float initialX = (float) tower.getCoordinate().getX();
+        float initialY = (float) tower.getCoordinate().getY();
 
-        double shiftX = node.getBoundsInParent().getCenterX() - initialX;
-        double shiftY = node.getBoundsInParent().getCenterY() - initialY;
+        double targetX = node.getBoundsInParent().getCenterX() - stone.getFitWidth() / 2;
+        double targetY = node.getBoundsInParent().getCenterY() - stone.getFitHeight() / 2;
+
+        double shiftX = targetX - initialX;
+        double shiftY = targetY - initialY;
+
+        double distance = Math.sqrt(shiftX * shiftX + shiftY * shiftY);
+        double speed = 200.0;
+        double durationInSeconds = distance / speed;
 
         KeyValue keyValueX = new KeyValue(stone.translateXProperty(), shiftX);
         KeyValue keyValueY = new KeyValue(stone.translateYProperty(), shiftY);
 
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1),  keyValueY,keyValueX);
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(durationInSeconds), keyValueY, keyValueX);
         timeline.getKeyFrames().add(keyFrame);
 
         timeline.setCycleCount(1);
         timeline.play();
-        timeline.setOnFinished(e->{
-            damageNearRaiders(node.getBoundsInParent().getCenterX(),node.getBoundsInParent().getCenterX(),pane);
+        timeline.setOnFinished(e -> {
+            damageNearRaiders(node.getBoundsInParent().getCenterX(), node.getBoundsInParent().getCenterY(), pane);
             pane.getChildren().remove(stone);
             Raider raider = (Raider) node;
-            if(raider.getHealthCondition()<0){
-                Platform.runLater(()->{
+            raider.setHealthCondition(raider.getHealthCondition() - tower.getDamagePower());
+            if (raider.getHealthCondition() <= 0) {
+                Platform.runLater(() -> {
                     raiders.remove(raider);
                     pane.getChildren().remove(node);
                     raider.setRaiderKilled(true);
-                    coins+=raider.getLoot();
-                    HomeController.getCoinNumber().setText(" "+coins);
+                    coins += raider.getLoot();
+                    HomeController.getCoinNumber().setText(" " + coins);
                 });
             }
-
         });
     }
     public void towerWakeUp(Pane pane,Tower tower){
@@ -243,6 +267,7 @@ public class MapController {
                             }else if(tower instanceof Archer && raider.isHoldingShield()){
                                 raider.setHealthCondition(raider.getHealthCondition()-(tower.getDamagePower()/2));
                             }
+                            break;
                         }
                     }
                 }
