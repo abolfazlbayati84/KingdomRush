@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class SecondMap extends Map{
     private static SecondMap secondMap;
     private SecondMap(Coordinate endPoint, int startingCoins) {
-        super(endPoint, startingCoins);
+        super(endPoint, startingCoins,2);
 
         ArrayList<Coordinate> towerCoordinates = getTowerCoordinates();
         ArrayList<Coordinate> path = getPath();

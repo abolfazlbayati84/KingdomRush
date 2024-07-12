@@ -30,8 +30,14 @@ public class MapController {
     private int coins;
     private Map map;
     private int passedRaiders;
+    private ArrayList<Raider> raiders;
+    private boolean isWarFinished;
+
     public MapController() {
+
         towers = new ArrayList<>();
+        raiders = new ArrayList<>();
+        isWarFinished = false;
     }
 
     public static MapController getMapController() {
@@ -77,6 +83,7 @@ public class MapController {
             Raider raider = (Raider) node;
             if(raider.getHealthCondition()<0){
                 Platform.runLater(()->{
+                    raiders.remove(raider);
                     pane.getChildren().remove(node);
                     raider.setRaiderKilled(true);
                     coins+=raider.getLoot();
@@ -117,6 +124,7 @@ public class MapController {
             Raider raider = (Raider) node;
             if(raider.getHealthCondition()<0){
                 Platform.runLater(()->{
+                    raiders.remove(raider);
                     pane.getChildren().remove(node);
                     raider.setRaiderKilled(true);
                     coins+=raider.getLoot();
@@ -140,6 +148,7 @@ public class MapController {
                 }
                 if(raider.getHealthCondition()<0){
                     Platform.runLater(()->{
+                        raiders.remove(raider);
                         pane.getChildren().remove(node);
                         raider.setRaiderKilled(true);
                         coins+=raider.getLoot();
@@ -184,6 +193,7 @@ public class MapController {
             Raider raider = (Raider) node;
             if(raider.getHealthCondition()<0){
                 Platform.runLater(()->{
+                    raiders.remove(raider);
                     pane.getChildren().remove(node);
                     raider.setRaiderKilled(true);
                     coins+=raider.getLoot();
@@ -259,6 +269,14 @@ public class MapController {
         this.coins = coins;
     }
 
+    public ArrayList<Raider> getRaiders() {
+        return raiders;
+    }
+
+    public void setRaiders(ArrayList<Raider> raiders) {
+        this.raiders = raiders;
+    }
+
     public Map getMap() {
         return map;
     }
@@ -266,6 +284,14 @@ public class MapController {
     public void setMap(Map map) {
         this.map = map;
         coins = map.getStartingCoins();
+    }
+
+    public boolean isWarFinished() {
+        return isWarFinished;
+    }
+
+    public void setWarFinished(boolean warFinished) {
+        isWarFinished = warFinished;
     }
 
     public int getPassedRaiders() {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class FirstMap extends Map{
     private static FirstMap firstMap;
     private FirstMap(Coordinate endPoint, int startingCoins) {
-        super(endPoint, startingCoins);
+        super(endPoint, startingCoins,1);
 
         this.getTowerCoordinates().add(new Coordinate(439.2,324));
         this.getTowerCoordinates().add(new Coordinate(330.4,112));

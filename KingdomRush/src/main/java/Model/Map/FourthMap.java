@@ -12,7 +12,7 @@ public class FourthMap extends Map{
     private ArrayList<Coordinate> path2;
 
     private FourthMap(Coordinate endPoint, int startingCoins) {
-        super(endPoint, startingCoins);
+        super(endPoint, startingCoins,4);
 
         ArrayList<Coordinate> path = getPath();
         path2 = new ArrayList<>();

@@ -21,6 +21,7 @@ public class RaiderController {
         return raiderController;
     }
     public PathTransition setPathForRaider(Raider raider){
+        MapController.getMapController().getRaiders().add(raider);
         PathTransition pathTransition = null;
         Random random = new Random();
         if(!(MapController.getMapController().getMap() instanceof FourthMap)){

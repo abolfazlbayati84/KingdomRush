@@ -8,10 +8,12 @@ public class Map {
     private final Coordinate endPoint;
     private final int startingCoins;
     private final ArrayList<Wave> waves;
+    private final int level;
 
-    public Map(Coordinate endPoint, int startingCoins) {
+    public Map(Coordinate endPoint, int startingCoins, int level) {
         this.endPoint = endPoint;
         this.startingCoins = startingCoins;
+        this.level = level;
         this.waves = new ArrayList<>();
         towerCoordinates = new ArrayList<>();
         path = new ArrayList<>();
@@ -35,5 +37,9 @@ public class Map {
 
     public ArrayList<Wave> getWaves() {
         return waves;
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

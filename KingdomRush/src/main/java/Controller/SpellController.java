@@ -58,6 +58,7 @@ public class SpellController {
                 raider.setRaiderKilled(true);
                 MapController.getMapController().setCoins(MapController.getMapController().getCoins() + raider.getLoot());
                 Platform.runLater(()->{
+                    MapController.getMapController().getRaiders().remove(raider);
                 pane.getChildren().remove(raider);
                 });
             }

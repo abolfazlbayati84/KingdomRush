@@ -23,9 +23,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -121,6 +118,7 @@ public class HomeController implements Initializable {
     private Label freezeSpell_lbl;
     private Label coinSpell_lbl;
     private Label littleChildSpell_lbl;
+
     public static Stage getStage() {
         return stage;
     }
@@ -325,6 +323,30 @@ public class HomeController implements Initializable {
         }
 
     }
+    public void setWiningCondition(){
+        AtomicInteger i= new AtomicInteger();
+        new Thread(()->{
+            while(!MapController.getMapController().getRaiders().isEmpty() || !MapController.getMapController().isWarFinished()){
+                i.getAndIncrement();
+            }
+            if(MapController.getMapController().getPassedRaiders()<20){
+                Platform.runLater(()->{
+                    MapController.getMapController().setWarFinished(false);
+                    PlayerController.getPlayerController().updateAfterWin(MapController.getMapController().getMap().getLevel());
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("win-page.fxml"));
+                    Scene scene = null;
+                    try {
+                        scene = new Scene(fxmlLoader.load(), 900, 400);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    stage.setTitle("Kingdom Rush");
+                    stage.setScene(scene);
+                    stage.show();
+                });
+            }
+        }).start();
+    }
     @FXML
     void firstLevelAction(MouseEvent event) throws IOException {
         addMapPic("first map.jpg");
@@ -340,6 +362,8 @@ public class HomeController implements Initializable {
         managePopUp();
 
         addNextButton();
+
+        setWiningCondition();
 
         AtomicInteger waveIndex = new AtomicInteger(0);
         AtomicBoolean nextWave = new AtomicBoolean(false);
@@ -389,6 +413,8 @@ public class HomeController implements Initializable {
 
             addNextButton();
 
+            setWiningCondition();
+
             AtomicInteger waveIndex = new AtomicInteger(0);
             AtomicBoolean nextWave = new AtomicBoolean(false);
             addWavePic();
@@ -433,6 +459,9 @@ public class HomeController implements Initializable {
             wave_lbl = new Label();
             pane.getChildren().add(wave_lbl);
         }
+        if(waveIndex.get()==3){
+            MapController.getMapController().setWarFinished(true);
+        }
         wave_lbl.setText("Waves: "+waveIndex+"/3");
         Font font = new Font("Arial",24);
         wave_lbl.setFont(font);
@@ -456,21 +485,12 @@ public class HomeController implements Initializable {
                 MapController.getMapController().setPassedRaiders(MapController.getMapController().getPassedRaiders()+1);
                 heartLabel.setText(MapController.getMapController().getPassedRaiders()+"/"+20);
                 raiderCounter++;
+                MapController.getMapController().getRaiders().remove(raider);
                 pane.getChildren().remove(raider);
                 if(MapController.getMapController().getPassedRaiders()==20){
                     MapController.getMapController().setPassedRaiders(0);
+                    MapController.getMapController().setWarFinished(false);
                     FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("lost-page.fxml"));
-                    Scene scene = null;
-                    try {
-                        scene = new Scene(fxmlLoader.load(), 900, 400);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    stage.setTitle("Kingdom Rush");
-                    stage.setScene(scene);
-                    stage.show();
-                } else if (raiderCounter==30) {
-                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("win-page.fxml"));
                     Scene scene = null;
                     try {
                         scene = new Scene(fxmlLoader.load(), 900, 400);
@@ -636,7 +656,10 @@ public class HomeController implements Initializable {
             addBackpackContent();
             raiderCounter = 0;
             managePopUp();
+
             addNextButton();
+
+            setWiningCondition();
 
             AtomicInteger waveIndex = new AtomicInteger(0);
             AtomicBoolean nextWave = new AtomicBoolean(false);
@@ -690,7 +713,12 @@ public class HomeController implements Initializable {
             addBackpackContent();
             raiderCounter = 0;
             managePopUp();
+
             addNextButton();
+
+
+            setWiningCondition();
+
 
             AtomicInteger waveIndex = new AtomicInteger(0);
             AtomicBoolean nextWave = new AtomicBoolean(false);

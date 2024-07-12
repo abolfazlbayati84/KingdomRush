@@ -36,6 +36,13 @@ public class PlayerController {
             player = Player.getPlayer();
         }
     }
+    public void updateAfterWin(int winingMap){
+        if(Player.getPlayer().getLevel() == winingMap){
+            Player.getPlayer().updateAfterWin(winingMap,true);
+        }else{
+            Player.getPlayer().updateAfterWin(winingMap,false);
+        }
+    }
     public void changeInformation(String newUsername,String newPassword){
         player.addNewInformation(newUsername,newPassword);
     }

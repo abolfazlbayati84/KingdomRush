@@ -11,7 +11,7 @@ public class ThirdMap extends Map{
 
     private static ThirdMap thirdMap;
     public ThirdMap(Coordinate endPoint, int startingCoins) {
-        super(endPoint, startingCoins);
+        super(endPoint, startingCoins,3);
 
         ArrayList<Coordinate> towerCoordinates = getTowerCoordinates();
         ArrayList<Coordinate> path = getPath();

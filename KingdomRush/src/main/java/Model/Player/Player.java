@@ -64,7 +64,6 @@ public class Player {
         backpack.put(Spells.Freeze,0);
         backpack.put(Spells.Coin,0);
         backpack.put(Spells.LittleChild,0);
-//
         if(rs.next()){
             backpack.put(Spells.HealthKit,rs.getInt(6));
             backpack.put(Spells.Freeze, rs.getInt(7));
@@ -105,7 +104,24 @@ public class Player {
             System.out.println(e.getMessage());
         }
     }
-    public static int getMaxID() throws Exception {
+    public void updateAfterWin(int winingLevel,boolean changeLevel){
+        String sqlCom;
+        this.diamond = this.diamond+100;
+        if(changeLevel){
+            winingLevel++;
+            this.level = winingLevel;
+            sqlCom = String.format("Update users SET level = '"+winingLevel+"' , diamond = '"+this.diamond+"' WHERE iD = '"+this.id+"'");
+        }else{
+            sqlCom = String.format("Update users SET diamond = '"+this.diamond+"' WHERE iD = '"+this.id+"'");
+        }
+        MySQL sql = new MySQL();
+        try {
+            sql.executeSQL(sqlCom);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    public int getMaxID() throws Exception {
         String sqlCmd = "SELECT MAX(iD) from users";
         MySQL sql = new MySQL();
         ResultSet rs = sql.executeQuery(sqlCmd);
