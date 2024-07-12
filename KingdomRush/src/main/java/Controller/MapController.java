@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Raiders.DarkNight;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -224,7 +225,14 @@ public class MapController {
                                     sendFire(copyPane,raider,tower);
                                 });
                             }
-                            raider.setHealthCondition(raider.getHealthCondition()-tower.getDamagePower());
+                            if(tower instanceof MortarBomb || !(raider.isHoldingShield()))
+                            {
+                                raider.setHealthCondition(raider.getHealthCondition()-tower.getDamagePower());
+                            }else if(tower instanceof Vizard && raider.isHoldingShield()){
+                                raider.setHoldingShield(false);
+                            }else if(tower instanceof Archer && raider.isHoldingShield()){
+                                raider.setHealthCondition(raider.getHealthCondition()-(tower.getDamagePower()/2));
+                            }
                         }
                     }
                 }

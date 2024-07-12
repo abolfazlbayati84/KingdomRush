@@ -10,6 +10,7 @@ abstract public class Raider extends ImageView {
     private int speed;
     private int loot;
     private boolean isFlying;
+    private boolean holdingShield;
     private ArrayList<String> photoAddresses;
     private boolean isRaiderKilled;
     private PathTransition pathTransition;
@@ -21,6 +22,15 @@ abstract public class Raider extends ImageView {
         photoAddresses = new ArrayList<>();
         isRaiderKilled = false;
     }
+
+    public boolean isHoldingShield() {
+        return holdingShield;
+    }
+
+    public void setHoldingShield(boolean holdingShield) {
+        this.holdingShield = holdingShield;
+    }
+
     abstract public void move();
 
     public int getHealthCondition() {

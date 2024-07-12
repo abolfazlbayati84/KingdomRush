@@ -374,54 +374,57 @@ public class HomeController implements Initializable {
 
     @FXML
     void fourthLevelAction(MouseEvent event) {
-        addMapPic("fourth map2.jpg");
-        MapController.getMapController().setMap(FourthMap.getFourthMap());
-        addNumberOfCoins();
-        pane.getChildren().add(coinNumber);
-        levelMap = new HashMap<>();
-        towerImageViewMap = new HashMap<>();
-        heartLabel = new Label();
-        addHeartToMap();
-        addBackpackContent();
-        raiderCounter = 0;
-        managePopUp();
+        if(Player.getPlayer().getLevel()>=4){
+            addMapPic("fourth map2.jpg");
+            MapController.getMapController().setMap(FourthMap.getFourthMap());
+            addNumberOfCoins();
+            pane.getChildren().add(coinNumber);
+            levelMap = new HashMap<>();
+            towerImageViewMap = new HashMap<>();
+            heartLabel = new Label();
+            addHeartToMap();
+            addBackpackContent();
+            raiderCounter = 0;
+            managePopUp();
 
-        addNextButton();
-
-        AtomicInteger waveIndex = new AtomicInteger(0);
-        AtomicBoolean nextWave = new AtomicBoolean(false);
-        addWavePic();
-        updateWave(waveIndex);
-
-        nextWave_btn.setOnMouseClicked(mouseEvent -> {
-            nextWave.set(true);
             addNextButton();
-        });
 
-        new Thread(() -> {
-            while (waveIndex.get() < 3) {
-                Platform.runLater(() -> {
-                    if (nextWave.get() && waveIndex.get() < 3) {
-                        Wave wave = FourthMap.getFourthMap().getWaves().get(waveIndex.get());
-                        addRaiderToMap(0,wave);
-                        waveIndex.incrementAndGet();
-                        updateWave(waveIndex);
-                        nextWave.set(false);
+            AtomicInteger waveIndex = new AtomicInteger(0);
+            AtomicBoolean nextWave = new AtomicBoolean(false);
+            addWavePic();
+            updateWave(waveIndex);
+
+            nextWave_btn.setOnMouseClicked(mouseEvent -> {
+                nextWave.set(true);
+                addNextButton();
+            });
+
+            new Thread(() -> {
+                while (waveIndex.get() < 3) {
+                    Platform.runLater(() -> {
+                        if (nextWave.get() && waveIndex.get() < 3) {
+                            Wave wave = FourthMap.getFourthMap().getWaves().get(waveIndex.get());
+                            addRaiderToMap(0,wave);
+                            waveIndex.incrementAndGet();
+                            updateWave(waveIndex);
+                            nextWave.set(false);
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-            }
-        }).start();
-//        scene.setOnMouseClicked(mouseEvent -> {
-//            double x = mouseEvent.getSceneX();
-//            double y = mouseEvent.getSceneY();
-//            System.out.println("X = "+x+"\tY = "+y);
-//        });
+            }).start();
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText(null);
+            alert.setContentText("This level is not open for you.");
+            alert.showAndWait();
+        }
 
     }
 
@@ -621,94 +624,110 @@ public class HomeController implements Initializable {
     }
     @FXML
     void secondLevelAction(MouseEvent event) {
-        addMapPic("second map.jpg");
-        MapController.getMapController().setMap(SecondMap.getSecondMap());
-        addNumberOfCoins();
-        pane.getChildren().add(coinNumber);
-        levelMap = new HashMap<>();
-        towerImageViewMap = new HashMap<>();
-        heartLabel = new Label();
-        addHeartToMap();
-        addBackpackContent();
-        raiderCounter = 0;
-        managePopUp();
-        addNextButton();
-
-        AtomicInteger waveIndex = new AtomicInteger(0);
-        AtomicBoolean nextWave = new AtomicBoolean(false);
-        addWavePic();
-        updateWave(waveIndex);
-
-        nextWave_btn.setOnMouseClicked(mouseEvent -> {
-            nextWave.set(true);
+        if(Player.getPlayer().getLevel()>=2){
+            addMapPic("second map.jpg");
+            MapController.getMapController().setMap(SecondMap.getSecondMap());
+            addNumberOfCoins();
+            pane.getChildren().add(coinNumber);
+            levelMap = new HashMap<>();
+            towerImageViewMap = new HashMap<>();
+            heartLabel = new Label();
+            addHeartToMap();
+            addBackpackContent();
+            raiderCounter = 0;
+            managePopUp();
             addNextButton();
-        });
 
-        new Thread(() -> {
-            while (waveIndex.get() < 3) {
-                Platform.runLater(() -> {
-                    if (nextWave.get() && waveIndex.get() < 3) {
-                        Wave wave = SecondMap.getSecondMap().getWaves().get(waveIndex.get());
-                        addRaiderToMap(0,wave);
-                        waveIndex.incrementAndGet();
-                        updateWave(waveIndex);
-                        nextWave.set(false);
+            AtomicInteger waveIndex = new AtomicInteger(0);
+            AtomicBoolean nextWave = new AtomicBoolean(false);
+            addWavePic();
+            updateWave(waveIndex);
+
+            nextWave_btn.setOnMouseClicked(mouseEvent -> {
+                nextWave.set(true);
+                addNextButton();
+            });
+
+            new Thread(() -> {
+                while (waveIndex.get() < 3) {
+                    Platform.runLater(() -> {
+                        if (nextWave.get() && waveIndex.get() < 3) {
+                            Wave wave = SecondMap.getSecondMap().getWaves().get(waveIndex.get());
+                            addRaiderToMap(0,wave);
+                            waveIndex.incrementAndGet();
+                            updateWave(waveIndex);
+                            nextWave.set(false);
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-            }
-        }).start();
+            }).start();
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText(null);
+            alert.setContentText("This level is not open for you.");
+            alert.showAndWait();
+        }
     }
 
     @FXML
     void thirdLevelAction(MouseEvent event) {
-        addMapPic("third map.jpg");
-        MapController.getMapController().setMap(ThirdMap.getThirdMap());
-        addNumberOfCoins();
-        pane.getChildren().add(coinNumber);
-        levelMap = new HashMap<>();
-        towerImageViewMap = new HashMap<>();
-        heartLabel = new Label();
-        addHeartToMap();
-        addBackpackContent();
-        raiderCounter = 0;
-        managePopUp();
-        addNextButton();
-
-        AtomicInteger waveIndex = new AtomicInteger(0);
-        AtomicBoolean nextWave = new AtomicBoolean(false);
-        addWavePic();
-        updateWave(waveIndex);
-
-        nextWave_btn.setOnMouseClicked(mouseEvent -> {
-            nextWave.set(true);
+        if(Player.getPlayer().getLevel()>=3){
+            addMapPic("third map.jpg");
+            MapController.getMapController().setMap(ThirdMap.getThirdMap());
+            addNumberOfCoins();
+            pane.getChildren().add(coinNumber);
+            levelMap = new HashMap<>();
+            towerImageViewMap = new HashMap<>();
+            heartLabel = new Label();
+            addHeartToMap();
+            addBackpackContent();
+            raiderCounter = 0;
+            managePopUp();
             addNextButton();
-        });
 
-        new Thread(() -> {
-            while (waveIndex.get() < 3) {
-                Platform.runLater(() -> {
-                    if (nextWave.get() && waveIndex.get() < 3) {
-                        Wave wave = ThirdMap.getThirdMap().getWaves().get(waveIndex.get());
-                        addRaiderToMap(0,wave);
-                        waveIndex.incrementAndGet();
-                        updateWave(waveIndex);
-                        nextWave.set(false);
+            AtomicInteger waveIndex = new AtomicInteger(0);
+            AtomicBoolean nextWave = new AtomicBoolean(false);
+            addWavePic();
+            updateWave(waveIndex);
+
+            nextWave_btn.setOnMouseClicked(mouseEvent -> {
+                nextWave.set(true);
+                addNextButton();
+            });
+
+            new Thread(() -> {
+                while (waveIndex.get() < 3) {
+                    Platform.runLater(() -> {
+                        if (nextWave.get() && waveIndex.get() < 3) {
+                            Wave wave = ThirdMap.getThirdMap().getWaves().get(waveIndex.get());
+                            addRaiderToMap(0,wave);
+                            waveIndex.incrementAndGet();
+                            updateWave(waveIndex);
+                            nextWave.set(false);
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
-            }
-        }).start();
+            }).start();
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("ERROR");
+            alert.setHeaderText(null);
+            alert.setContentText("This level is not open for you.");
+            alert.showAndWait();
+        }
     }
 
     @FXML
