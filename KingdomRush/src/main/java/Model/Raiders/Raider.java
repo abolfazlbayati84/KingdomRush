@@ -1,5 +1,6 @@
 package Model.Raiders;
 
+import javafx.animation.PathTransition;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ abstract public class Raider extends ImageView {
     private boolean isFlying;
     private ArrayList<String> photoAddresses;
     private boolean isRaiderKilled;
+    private PathTransition pathTransition;
 
     public Raider(int healthCondition, int speed, int loot) {
         this.healthCondition = healthCondition;
@@ -23,6 +25,10 @@ abstract public class Raider extends ImageView {
 
     public int getHealthCondition() {
         return healthCondition;
+    }
+
+    public PathTransition getPathTransition() {
+        return pathTransition;
     }
 
     public int getSpeed() {
@@ -59,6 +65,10 @@ abstract public class Raider extends ImageView {
 
     public void setLoot(int loot) {
         this.loot = loot;
+    }
+
+    public void setPathTransition(PathTransition pathTransition) {
+        this.pathTransition = pathTransition;
     }
 
     public void setFlying(boolean flying) {

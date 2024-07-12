@@ -41,17 +41,21 @@ public class PlayerController {
     }
     public void addSpell(String spell) throws NotEnoughDiamonds {
         if(spell.equals("Bomb") && Player.getPlayer().getDiamond()>250){
-            player.setDiamond(player.getDiamond()-250);
-            Player.getPlayer().addToBackpack(Spells.LittleChild.toString());
+            player.setDiamond(player.getDiamond()-Spells.LittleChild.getPrice());
+            PlayerController.getPlayerController().getPlayer().getBackpack().replace(Spells.LittleChild,PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.LittleChild)+1);
+            Player.getPlayer().addToBackpack(Spells.LittleChild.toString(),PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.LittleChild));
         }else if(spell.equals("Coin") && Player.getPlayer().getDiamond()>50){
-            player.setDiamond(player.getDiamond()-50);
-            Player.getPlayer().addToBackpack(Spells.Coin.toString());
+            player.setDiamond(player.getDiamond()-Spells.Coin.getPrice());
+            PlayerController.getPlayerController().getPlayer().getBackpack().replace(Spells.Coin,PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.Coin)+1);
+            Player.getPlayer().addToBackpack(Spells.Coin.toString(),PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.Coin));
         }else if(spell.equals("Freeze") && Player.getPlayer().getDiamond()>150){
-            player.setDiamond(player.getDiamond()-150);
-            Player.getPlayer().addToBackpack(Spells.Freeze.toString());
+            player.setDiamond(player.getDiamond()-Spells.Freeze.getPrice());
+            PlayerController.getPlayerController().getPlayer().getBackpack().replace(Spells.Freeze,PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.Freeze)+1);
+            Player.getPlayer().addToBackpack(Spells.Freeze.toString(),PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.Freeze));
         }else if(spell.equals("Heart") && Player.getPlayer().getDiamond()>100){
-            player.setDiamond(player.getDiamond()-100);
-            Player.getPlayer().addToBackpack(Spells.HealthKit.toString());
+            player.setDiamond(player.getDiamond()-Spells.HealthKit.getPrice());
+            PlayerController.getPlayerController().getPlayer().getBackpack().replace(Spells.HealthKit,PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.HealthKit)+1);
+            Player.getPlayer().addToBackpack(Spells.HealthKit.toString(),PlayerController.getPlayerController().getPlayer().getBackpack().get(Spells.HealthKit));
         }else{
             throw new NotEnoughDiamonds();
         }

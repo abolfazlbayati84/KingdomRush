@@ -112,7 +112,7 @@ public class HomeController implements Initializable {
     private java.util.Map<Tower,ImageView> towerImageViewMap;
     private int raiderCounter;
     private ImageView heartImageView;
-    private Label heartLabel;
+    private static Label heartLabel;
     private VBox heartVbox;
     private VBox freezeVbox;
     private VBox coinVbox;
@@ -127,6 +127,10 @@ public class HomeController implements Initializable {
 
     public static void setStage(Stage stage) {
         HomeController.stage = stage;
+    }
+
+    public static Label getHeartLabel() {
+        return heartLabel;
     }
 
     public static void setCoinNumber(Label coinNumber) {
@@ -399,21 +403,7 @@ public class HomeController implements Initializable {
         pane.getChildren().add(imageView);
     }
     public void setPathForRaiders(Raider raider){
-        Path path2 = new Path();
-        path2.getElements().add(new MoveTo(MapController.getMapController().getMap().getPath().get(0).getX(), MapController.getMapController().getMap().getPath().get(0).getY()));
-        boolean isFirstTime = true;
-        for (Coordinate coordinate : MapController.getMapController().getMap().getPath()) {
-            if (!isFirstTime) {
-                path2.getElements().add(new LineTo(coordinate.getX(), coordinate.getY()));
-            }
-            isFirstTime = false;
-        }
-
-        PathTransition pathTransition = new PathTransition();
-        pathTransition.setPath(path2);
-        pathTransition.setDuration(Duration.seconds(raider.getSpeed()));
-        pathTransition.setNode(raider);
-        pathTransition.play();
+        PathTransition pathTransition = RaiderController.getRaiderController().setPathForRaider(raider);
         pathTransition.setOnFinished(actionEvent -> {
             if(!raider.isRaiderKilled()){
                 MapController.getMapController().setPassedRaiders(MapController.getMapController().getPassedRaiders()+1);
@@ -524,6 +514,26 @@ public class HomeController implements Initializable {
         label.setFont(font);
         vBox.getChildren().add(label);
     }
+    public void manageImagesForBackpack(ImageView imageView,Spells spell,VBox vBox){
+        imageView.setFitHeight(30);
+        imageView.setFitWidth(30);
+        vBox.getChildren().add(imageView);
+        imageView.setOnMouseClicked(e->{
+            if(spell.equals(Spells.HealthKit) && PlayerController.getPlayerController().getPlayer().getBackpack().get(spell)>0){
+                SpellController.getSpellController().dropHealthKit();
+                heartSpell_lbl.setText(PlayerController.getPlayerController().getPlayer().getBackpack().get(spell).toString());
+            }else if(spell.equals(Spells.Freeze) && PlayerController.getPlayerController().getPlayer().getBackpack().get(spell)>0){
+                SpellController.getSpellController().dropFreeze(pane);
+                freezeSpell_lbl.setText(PlayerController.getPlayerController().getPlayer().getBackpack().get(spell).toString());
+            }else if(spell.equals(Spells.Coin) && PlayerController.getPlayerController().getPlayer().getBackpack().get(spell)>0){
+                SpellController.getSpellController().dropCoin();
+                coinSpell_lbl.setText(PlayerController.getPlayerController().getPlayer().getBackpack().get(spell).toString());
+            } else if (spell.equals(Spells.LittleChild) && PlayerController.getPlayerController().getPlayer().getBackpack().get(spell)>0) {
+                SpellController.getSpellController().dropLittleChild(pane);
+                littleChildSpell_lbl.setText(PlayerController.getPlayerController().getPlayer().getBackpack().get(spell).toString());
+            }
+        });
+    }
     public void addBackpackContent(){
         heartSpell_lbl = new Label();
         freezeSpell_lbl = new Label();
@@ -547,21 +557,11 @@ public class HomeController implements Initializable {
         ImageView freezeImageView = new ImageView(image2);
         ImageView coinImageView = new ImageView(image3);
         ImageView littleChildImageView = new ImageView(image4);
-        heartImageView.setFitHeight(30);
-        heartImageView.setFitWidth(30);
-        heartVbox.getChildren().add(heartImageView);
 
-        freezeImageView.setFitWidth(30);
-        freezeImageView.setFitHeight(30);
-        freezeVbox.getChildren().add(freezeImageView);
-
-        coinImageView.setFitHeight(30);
-        coinImageView.setFitWidth(30);
-        coinVbox.getChildren().add(coinImageView);
-
-        littleChildImageView.setFitWidth(30);
-        littleChildImageView.setFitHeight(30);
-        littleChildVbox.getChildren().add(littleChildImageView);
+        manageImagesForBackpack(heartImageView,Spells.HealthKit,heartVbox);
+        manageImagesForBackpack(freezeImageView,Spells.Freeze,freezeVbox);
+        manageImagesForBackpack(coinImageView,Spells.Coin,coinVbox);
+        manageImagesForBackpack(littleChildImageView,Spells.LittleChild,littleChildVbox);
 
         manageLabelForBackpack(heartSpell_lbl,Spells.HealthKit,heartVbox);
         manageLabelForBackpack(freezeSpell_lbl,Spells.Freeze,freezeVbox);

@@ -1,5 +1,6 @@
 package Model.Player;
 
+import Controller.PlayerController;
 import Exceptions.UserNotFound;
 import Model.MySQL.MySQL;
 
@@ -27,6 +28,15 @@ public class Player {
         }
         return player;
     }
+    public void deleteSpells(String spell){
+        String sqlCom = String.format("Update users SET "+spell+" = '"+ backpack.get(Spells.valueOf(spell)) +"' WHERE iD = '"+this.id+"'");
+        MySQL sql = new MySQL();
+        try {
+            sql.executeSQL(sqlCom);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
     public void login(String username, String password) throws Exception {
         String sqlCom = String.format("SELECT * FROM users WHERE username = '"+username+"' AND password = '"+password+"'");
@@ -46,7 +56,7 @@ public class Player {
             throw new UserNotFound();
     }
     public void getSpellsFromDB() throws Exception {
-        String sqlCmd = "SELECT * from backpack where playerID = '"+this.id+"'";
+        String sqlCmd = "SELECT * from users where iD = '"+this.id+"'";
         MySQL sql = new MySQL();
         ResultSet rs = sql.executeQuery(sqlCmd);
         String spell;
@@ -54,20 +64,12 @@ public class Player {
         backpack.put(Spells.Freeze,0);
         backpack.put(Spells.Coin,0);
         backpack.put(Spells.LittleChild,0);
-        while(rs.next()){
-            spell = rs.getString(2);
-            if(spell.equals("HealthKit")){
-                backpack.replace(Spells.HealthKit,backpack.get(Spells.HealthKit)+1);
-            }
-            if(spell.equals("Freeze")){
-                backpack.replace(Spells.Freeze,backpack.get(Spells.Freeze)+1);
-            }
-            if(spell.equals("Coin")){
-                backpack.replace(Spells.Coin,backpack.get(Spells.Coin)+1);
-            }
-            if(spell.equals("LittleChild")){
-                backpack.replace(Spells.LittleChild, backpack.get(Spells.LittleChild)+1);
-            }
+//
+        if(rs.next()){
+            backpack.put(Spells.HealthKit,rs.getInt(6));
+            backpack.put(Spells.Freeze, rs.getInt(7));
+            backpack.put(Spells.Coin, rs.getInt(8));
+            backpack.put(Spells.LittleChild, rs.getInt(9));
         }
     }
     public void logout(){
@@ -75,7 +77,7 @@ public class Player {
     }
 
     public void signUpPlayer(String username, String password, int level, int diamond) throws Exception {
-        String sqlCom =String.format("INSERT INTO `users` (`iD`,`username`,`password`,`level`,`diamond`) VALUES ('%d', '%s','%s','%d','%d')",getMaxID()+1,username,password,level,diamond);
+        String sqlCom =String.format("INSERT INTO `users` (`iD`,`username`,`password`,`level`,`diamond`,`HealthKit`,`Freeze`,`Coin`,`LittleChild`) VALUES ('%d', '%s','%s','%d','%d','%d','%d','%d','%d')",getMaxID()+1,username,password,level,diamond,0,0,0,0);
         MySQL sql = new MySQL();
         try {
             sql.executeSQL(sqlCom);
@@ -94,8 +96,8 @@ public class Player {
         this.username = newUsername;
         this.password = newPassword;
     }
-    public void addToBackpack(String spell){
-        String sqlCom = String.format("INSERT INTO `backpack`(`playerID`,`content`) VALUES('%d','%s')",id,spell);
+    public void addToBackpack(String spell,int number){
+        String sqlCom = String.format("Update users SET "+spell+" = '"+number+"' WHERE iD = '"+this.id+"'");
         MySQL sql = new MySQL();
         try {
             sql.executeSQL(sqlCom);
